@@ -1,1 +1,1 @@
-# JSpider
+# JSearcher
