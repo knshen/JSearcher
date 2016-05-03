@@ -17,6 +17,8 @@ import parser.sjtu.sk.HtmlParser;
 import parser.sjtu.sk.LeetcodeProblemTitleExtractor;
 import url.manager.sjtu.sk.URL;
 import url.manager.sjtu.sk.URLManager;
+import util.sjtu.sk.OperatingSystem;
+import util.sjtu.sk.Util;
 
 public class DefaultScheduler implements Runnable {
 	
@@ -75,9 +77,17 @@ public class DefaultScheduler implements Runnable {
 					ie.printStackTrace();
 				}
 			}
+			if(out != null) {
+				// output html file
+				String path = "";
+				if(Util.getCurrentOS() == OperatingSystem.LINUX)
+					path = "/home/knshen/test.html";
+				else if(Util.getCurrentOS() == OperatingSystem.WINDOWS) 
+					path = "f://test.html";
 				
-			// output html file
-			out.output("/home/knshen/test.html", total_data);
+				out.output(path, total_data);
+			}
+				
 		}
 	}
 	
