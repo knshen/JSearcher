@@ -7,26 +7,22 @@ import java.util.concurrent.locks.ReentrantLock;
 public class URLManager {
 	volatile private Queue<URL> urls = new LinkedList<URL>();
 	volatile private Set<URL> visited = new HashSet<URL>();
-	
+		
 	public boolean isVisited(URL url) {
 		return visited.contains(url);
 	}
 	
+	public int size() {
+		return urls.size();
+	}
+	
 	public boolean addOneURL(URL new_url) {
-		Lock lock = new ReentrantLock();
-		lock.lock(); 
-		try {
-			if(!isVisited(new_url)) {
-				urls.offer(new_url);
-				visited.add(new_url);
-				return true;
-			}
-			return false;
+		if(!isVisited(new_url)) {
+			urls.offer(new_url);
+			visited.add(new_url);
+			return true;
 		}
-		finally {
-			lock.unlock();
-		}
-		
+		return false;
 	}
 	
 	public boolean addURLList(List<URL> list) {
@@ -37,17 +33,10 @@ public class URLManager {
 	}
 	
 	public URL fetchOneURL() {
-		Lock lock = new ReentrantLock();
-		lock.lock(); 
-		try {
-			if(!urls.isEmpty()) {
-				return urls.poll();
-			}
-			return null;
+		if(!urls.isEmpty()) {
+			return urls.poll();
 		}
-		finally {
-			lock.unlock();
-		}
+		return null;
 	}
 	
 	public static void main(String args[]) {

@@ -1,6 +1,8 @@
 package scheduler.sjtu.sk;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import downloader.sjtu.sk.HtmlDownloader;
 import logging.sjtu.sk.Logging;
@@ -9,35 +11,51 @@ import url.manager.sjtu.sk.URL;
 import url.manager.sjtu.sk.URLManager;
 
 public class DefaultScheduler implements Runnable {
-	private int num_threads;
+	
 	private HtmlDownloader hd = null;
 	private HtmlParser hp = null;
 	private URLManager um = null;
+	
+	private int num_threads;
 	private boolean isThreadPool = false;
+	private int count = 0;
+	private final Lock lock = new ReentrantLock(); 
+	private int maxNum = 0;
 	
-	
-	public static DefaultScheduler createDefaultScheduler(int num_threads, boolean isThreadPool) {
-		return new DefaultScheduler(num_threads, isThreadPool);
+	public static DefaultScheduler createDefaultScheduler(int num_threads, boolean isThreadPool, int maxNum) {
+		return new DefaultScheduler(num_threads, isThreadPool, maxNum);
 	}
 	
-	private DefaultScheduler(int num_threads, boolean isThreadPool) {
+	private DefaultScheduler(int num_threads, boolean isThreadPool, int maxNum) {
 		this.num_threads = num_threads;
 		this.isThreadPool = isThreadPool;
+		this.maxNum = maxNum;
+		
 		um = new URLManager();
 		hd = new HtmlDownloader();
 		hp = new HtmlParser();
 	}
 	
 	public void run() {
-		
+		craw();
 	}
 	
-	public void craw(List<URL> seed, int maxNum) {
+	public void craw() {
+		lock.lock();
+		try {
+			count++;
+			//////
+		}
+		finally {
+			lock.unlock();
+		}
+	}
+	
+	public void preCraw(List<URL> seed, int initNum) {
 		um.addURLList(seed);
-		int count = 0;
 		
 		while(true) {
-			if(count >= maxNum)
+			if(count >= initNum)
 				break;
 			
 			URL new_url = um.fetchOneURL();
