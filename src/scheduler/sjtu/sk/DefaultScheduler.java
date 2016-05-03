@@ -6,9 +6,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.jsoup.nodes.Document;
+
 import downloader.sjtu.sk.HtmlDownloader;
 import logging.sjtu.sk.Logging;
+import outputer.sjtu.sk.HtmlTableOutputer;
+import outputer.sjtu.sk.Outputer;
+import parser.sjtu.sk.DataExtractor;
 import parser.sjtu.sk.HtmlParser;
+import parser.sjtu.sk.LeetcodeProblemTitleExtractor;
 import url.manager.sjtu.sk.URL;
 import url.manager.sjtu.sk.URLManager;
 
@@ -17,28 +23,36 @@ public class DefaultScheduler implements Runnable {
 	private HtmlDownloader hd = null;
 	private HtmlParser hp = null;
 	private URLManager um = null;
+	private Outputer out = null;
+	private DataExtractor de = null;
 	
+	private List<String> total_data = new ArrayList<String>();
 	private int num_threads;
 	private boolean isThreadPool = false;
 	private int count = 0; // # of pages have visited
 	private final Lock lock = new ReentrantLock(); 
 	private int maxNum = 0;
 	
-	public static DefaultScheduler createDefaultScheduler(int num_threads, boolean isThreadPool, int maxNum) {
-		return new DefaultScheduler(num_threads, isThreadPool, maxNum);
+	public static DefaultScheduler createDefaultScheduler() {
+		return new DefaultScheduler();
 	}
 	
-	private DefaultScheduler(int num_threads, boolean isThreadPool, int maxNum) {
+	public final void config(Outputer out, DataExtractor de, int num_threads, boolean isThreadPool, int maxNum) {
+		// config parameters
+		this.out = out;
+		this.de = de;
 		this.num_threads = num_threads;
 		this.isThreadPool = isThreadPool;
 		this.maxNum = maxNum;
-		
+	}
+	
+	private DefaultScheduler() {
 		um = new URLManager();
 		hd = new HtmlDownloader();
 		hp = new HtmlParser();
 	}
 	
-	public void startCraw(List<URL> seed) {
+	public void runTask(List<URL> seed) {
 		this.preCraw(seed, (int)(0.1 * maxNum));
 		if(isThreadPool) {
 			//TODO thread pool
@@ -53,6 +67,17 @@ public class DefaultScheduler implements Runnable {
 			}
 			for(Thread th : workers) 
 				th.start();	
+				
+			for(Thread th : workers) {
+				try {
+					th.join();
+				} catch(InterruptedException ie) {
+					ie.printStackTrace();
+				}
+			}
+				
+			// output html file
+			out.output("/home/knshen/test.html", total_data);
 		}
 	}
 	
@@ -99,10 +124,14 @@ public class DefaultScheduler implements Runnable {
 			}
 			
 			Logging.log(Thread.currentThread().getName() + " visiting: " + new_url.getURLValue());
+		
 			List<URL> new_links = hp.parse(html, new_url.getURLValue());
-			
+			List<String> data = de.extract(hp.getDocument()); 
 			lock.lock();
 			try {
+				if(data != null && data.size() > 0) 
+					total_data.addAll(data);
+				
 				um.addURLList(new_links);
 			} 
 			finally {
@@ -112,8 +141,7 @@ public class DefaultScheduler implements Runnable {
 		
 	}
 	
-	
-	public void preCraw(List<URL> seed, int initNum) {
+	private void preCraw(List<URL> seed, int initNum) {
 		um.addURLList(seed);
 		
 		while(true) {
@@ -130,15 +158,24 @@ public class DefaultScheduler implements Runnable {
 			
 			count++;
 			Logging.log("preCraw: visiting: " + new_url.getURLValue());
+			// get links & extract data
 			List<URL> new_links = hp.parse(html, new_url.getURLValue());
+			List<String> data = de.extract(hp.getDocument());
+			if(data != null && data.size() > 0) 
+				total_data.addAll(data);
+			
 			um.addURLList(new_links);
 		}
 	}
 	
 	public static void main(String[] args) {
 		URL seed = new URL("https://leetcode.com/problemset/algorithms/");
-		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler(2, false, 20);
-		ds.startCraw(Arrays.asList(seed));
+		//create scheduler instance
+		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
+		// config parameters
+		ds.config(new HtmlTableOutputer(), new LeetcodeProblemTitleExtractor(), 5, false, 100);
+		// run tasks
+		ds.runTask(Arrays.asList(seed));
 	}
 
 }

@@ -12,12 +12,18 @@ import logging.sjtu.sk.Logging;
 import url.manager.sjtu.sk.URL;
 
 public class HtmlParser {
+	private Document doc = null;
+	
+	public Document getDocument() {
+		return this.doc;
+	}
+	
 	public List<URL> parse(String html) {
 		return parse(html, "");
 	}
 	
 	public List<URL> parse(String html, String base_url) {
-		Document doc = Jsoup.parse(html, base_url);
+		doc = Jsoup.parse(html, base_url);
 		//doc = Jsoup.connect("https://leetcode.com/problemset/algorithms/").get();
 		Elements links = doc.select("a[href]");
 		

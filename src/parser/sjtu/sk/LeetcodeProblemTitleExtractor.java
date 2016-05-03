@@ -7,7 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class LeetcodeProblemTitleExtractor extends DataExtractor<String> {
+public class LeetcodeProblemTitleExtractor extends DataExtractor {
 	
 	public List<String> extract(Document doc) {
 		List<String> res = new ArrayList<String>();
@@ -24,7 +24,7 @@ public class LeetcodeProblemTitleExtractor extends DataExtractor<String> {
 	
 	public static void main(String[] args) throws Exception {
 		//unit test
-		DataExtractor<String> de = new LeetcodeProblemTitleExtractor();
+		DataExtractor de = new LeetcodeProblemTitleExtractor();
 		
 		Document doc = Jsoup.connect("https://leetcode.com/problems/top-k-frequent-elements/").get();
 		de.extract(doc);
