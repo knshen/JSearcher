@@ -178,6 +178,10 @@ public class DefaultScheduler implements Runnable {
 		}
 	}
 	
+	/**
+	 * this is the entrance of demo test
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		URL seed = new URL("https://leetcode.com/problemset/algorithms/");
 		//create scheduler instance

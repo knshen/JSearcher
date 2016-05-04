@@ -1,10 +1,18 @@
 package url.manager.sjtu.sk;
 
+import util.sjtu.sk.Util;
+
 public class URL {
 	private String urlValue;
+	private String md5str;
 	
 	public URL(String url) {
 		this.urlValue = url;
+		this.md5str = Util.MD5(urlValue.trim());
+	}
+	
+	public String getMD5Str() {
+		return this.md5str;
 	}
 	
 	public String getURLValue() {
@@ -13,14 +21,18 @@ public class URL {
 	
 	public boolean equals(Object other) {
 		URL _url = (URL)other;
-		return _url.urlValue.equals(urlValue);
+		return _url.md5str.equals(md5str);
 	}
 	
 	public int hashCode() {
-		return urlValue.hashCode();
+		return md5str.hashCode();
 	}
 	
 	public String toString() {
+		return md5str;
+	}
+	
+	public String print() {
 		return "[" + urlValue + "]";
 	}
 }
