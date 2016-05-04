@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="libs/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/jna-platform-4.1.0.jar"/>
 	<classpathentry kind="lib" path="libs/jsoup-1.9.1.jar"/>
+	<classpathentry kind="lib" path="libs/mongo-2.5.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -153,7 +153,7 @@ public class Main {
 	public void get() {  
         CloseableHttpClient httpclient = HttpClients.createDefault();  
         try {  
-            // 创建httpget.    
+            // 创建httpget. 
             HttpGet httpget = new HttpGet("https://leetcode.com/problemset/algorithms/");  
             System.out.println("executing request " + httpget.getURI());  
             // 执行get请求.    
@@ -195,8 +195,12 @@ public class Main {
 	public void parse() {
         Document doc = null;
         try {
-
-            doc = Jsoup.connect("https://leetcode.com/problemset/algorithms/").get();
+        	long a = System.currentTimeMillis();
+            doc = Jsoup.connect("http://42.62.30.180").get();
+            long b = System.currentTimeMillis();
+            System.out.println((b-a) + "ms");
+            
+            
             System.out.println("#" + doc.baseUri());
             Elements links = doc.select("a[href]");
             Elements media = doc.select("[src]");
@@ -228,6 +232,7 @@ public class Main {
 		Main m = new Main();
 		//m.get();
 		m.parse();
+		//202.120.2.119
 	}
 
 }
