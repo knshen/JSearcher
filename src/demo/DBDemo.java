@@ -27,10 +27,11 @@ public class DBDemo {
         new_doc.put("name", "hoojo");
         new_doc.put("age", 24);
         new_doc.put("sex", "male");
-        
+        /*
         list.add(new_doc);
         users.insert(list).getN();
         System.out.println("after: " + users.count());
+        */
 	}
 	
 	public static void main(String[] args) throws Exception {

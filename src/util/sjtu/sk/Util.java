@@ -1,8 +1,15 @@
 package util.sjtu.sk;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.Properties;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 public class Util {
 	
@@ -55,6 +62,48 @@ public class Util {
 	
 	public static String decrypt(String str) {
 		return encrypt(encrypt(str));
+	}
+	
+	public static DBObject serialize(Object pojo, String dto) throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
+		DBObject new_doc = new BasicDBObject();
+		Class<?> class_name = Class.forName(dto);
+		
+		Field[] fields = class_name.getDeclaredFields();
+		Method[] methods = class_name.getDeclaredMethods();
+		
+		for(Field f : fields) {
+			String fn = f.getName().toLowerCase();
+			for(Method m : methods) {
+				String mn = m.getName().toLowerCase();
+				if(mn.startsWith("get") && mn.indexOf(fn) != -1) {
+					new_doc.put(f.getName(), m.invoke(pojo, null));				
+					break;
+				}
+			}
+			
+		}
+		return new_doc;
+	}
+	
+	public static Object deserialize(DBObject obj, String dto) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		Class<?> class_name = Class.forName(dto);
+		Object pojo = class_name.newInstance();
+		Map<String, Object> map = obj.toMap();
+		
+		Method[] methods = class_name.getDeclaredMethods();
+		Field[] fields = class_name.getDeclaredFields();
+		
+		for(Field f : fields) {
+			String fn = f.getName().toLowerCase();
+			for(Method m : methods) {
+				String mn = m.getName().toLowerCase();
+				if(mn.startsWith("set") && mn.indexOf(fn) != -1) {
+					m.invoke(pojo, map.get(f.getName()));
+				}
+			}
+		}
+		
+		return pojo;
 	}
 	
 	public static void main(String[] args) {
