@@ -10,6 +10,11 @@ import util.sjtu.sk.Condition;
 import util.sjtu.sk.Triple;
 import util.sjtu.sk.Util;
 
+/**
+ * Java API that encapsulates part of MongoDB query and insert operations
+ * @author ShenKai
+ *
+ */
 public class DBController {
 	private Mongo mg = null;
 	private DB db = null;
@@ -46,11 +51,15 @@ public class DBController {
 	}
 	
 	/**
-	 * insert a list of data to a collection
+	 * insert a list of data to a collection. Note that the data is a list of
+	 * objects defined by user; User must pass the complete class name of his
+	 * own class(like java.util.HashMap). By default, the objects within the
+	 * list must be the same type.
+	 * 
 	 * @param col_name : colletion name
 	 * @param data : data to insert
 	 * @param dto : data type(complete path)
-	 * @return
+	 * @return if the insert is successful
 	 */
 	public boolean insert(String col_name, List<Object> data, String dto) {
 		if(mg == null)
@@ -77,7 +86,7 @@ public class DBController {
 	/**
 	 * query all the data in a collection
 	 * @param col_name : colletion name
-	 * @param dto : data type
+	 * @param dto : complete data type defined by user
 	 * @return data
 	 */
 	public List<Object> queryAll(String col_name, String dto) {
@@ -104,18 +113,32 @@ public class DBController {
         return res;
 	}
 	
-	
+	/**
+	 * query data in one collection with a filter(and or condition) 
+	 * 
+	 * @param col_name : collection name
+	 * @param dto : complete data type defined by user
+	 * @param filter : combined "and","or" conditions, the rule is as follows:
+	 * [ [triple and triple ... and triple] or ... or [triple and triple ... and triple] ],
+	 * a triple is defined as (key_name, condition, value)
+	 * 
+	 * @param keys : fields to query
+	 * @return data
+	 */
 	public List<Object> queryByWhere(String col_name, String dto, List<List<Triple>> filter, List<String> keys) {
 		List<Object> res = new ArrayList<Object>();
 		DBCollection dbc = db.getCollection(col_name);
 		// filter
-		BasicDBObject ref = new BasicDBObject();
+		BasicDBObject all_ref = new BasicDBObject();
 		DBObject _keys = new BasicDBObject();
 		
-		for(String key : keys) 
-			_keys.put(key, true);
+		if(keys != null)
+			for(String key : keys) 
+				_keys.put(key, true);
 		
+		BasicDBList list = new BasicDBList();
 		for(List<Triple> and : filter) {
+			BasicDBObject ref = new BasicDBObject();
 			for(Triple tri : and) {
 				if(!ref.containsField(tri.key_name)) {
 					if(tri.condition.equals(Condition.EQUAL)) 
@@ -123,20 +146,25 @@ public class DBController {
 					
 					else 
 						ref.put(tri.key_name, new BasicDBObject(tri.condition, tri.value));
+									
 				}
 				else {
 					if(tri.condition.equals(Condition.EQUAL)) {
-						ref.put(tri.key_name, arg1)
+						// TODO It is impossible
 					}
 					else {
-						
+						BasicDBObject bo = (BasicDBObject)ref.get(tri.key_name);
+						bo.append(tri.condition, tri.value);						
 					}
 				}
-			}
+			} // end an "and" query
+			list.add(ref);
 		}
 		
+		all_ref.put("$or", list);
+		
 		try {
-	        DBCursor cur = dbc.find(ref, _keys);
+	        DBCursor cur = dbc.find(all_ref, _keys);
 	    	while (cur.hasNext()) {
 	    		DBObject doc = cur.next();
 	    		try {
@@ -175,17 +203,24 @@ public class DBController {
 		
 		
 		List<List<Triple>> filter = new ArrayList<List<Triple>>();
-		List<Triple> list = new ArrayList<Triple>();
-		list.add(new Triple("age", Condition.MORE_EQUAL, 26));
-		//list.add(new Triple("sex", Condition.EQUAL, "male"));
-		list.add(new Triple("age", Condition.LESS_EQUAL, 28));
-		filter.add(list);
+		List<Triple> list1 = new ArrayList<Triple>();
+		list1.add(new Triple("age", Condition.MORE_EQUAL, 26));
+		list1.add(new Triple("age", Condition.LESS_EQUAL, 27));
+		List<Triple> list2 = new ArrayList<Triple>();
+		list2.add(new Triple("age", Condition.MORE_EQUAL, 29));
+		list2.add(new Triple("age", Condition.LESS_EQUAL, 30));
+		List<Triple> list3 = new ArrayList<Triple>();
+		list3.add(new Triple("age", Condition.EQUAL, 25));
 		
-		List<Object> dtos = dc.queryByWhere("demo", "dto.user.Person", filter, Arrays.asList("age"));
+		filter.add(list1);
+		filter.add(list2);
+		filter.add(list3);
+		List<Object> dtos = dc.queryByWhere("demo", "dto.user.Person", filter, null);
 		
 		for(Object dto : dtos) {
 			System.out.println(dto);
 		}
+		
 	}
 
 }
