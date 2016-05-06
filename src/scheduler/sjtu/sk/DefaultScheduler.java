@@ -20,6 +20,13 @@ import url.manager.sjtu.sk.URLManager;
 import util.sjtu.sk.OperatingSystem;
 import util.sjtu.sk.Util;
 
+/**
+ * Default scheduler of the Spider
+ * Scheduler is the core logic to combine all the modules together
+ * This scheduler supports multi-thread working
+ * @author ShenKai
+ *
+ */
 public class DefaultScheduler implements Runnable {
 	
 	private HtmlDownloader hd = null;
@@ -28,17 +35,25 @@ public class DefaultScheduler implements Runnable {
 	private Outputer out = null;
 	private DataExtractor de = null;
 	
-	private List<String> total_data = new ArrayList<String>();
-	private int num_threads;
+	private List<String> total_data = new ArrayList<String>(); // global crawed data 
+	private int num_threads; // number of threads
 	private boolean isThreadPool = false;
-	private int count = 0; // # of pages have visited
+	private int count = 0; // number of pages have visited
 	private final Lock lock = new ReentrantLock(); 
-	private int maxNum = 0;
+	private int maxNum = 0; // max number of pages allowed
 	
 	public static DefaultScheduler createDefaultScheduler() {
 		return new DefaultScheduler();
 	}
 	
+	/**
+	 * configure parameters of the Spider
+	 * @param out
+	 * @param de
+	 * @param num_threads
+	 * @param isThreadPool
+	 * @param maxNum
+	 */
 	public final void config(Outputer out, DataExtractor de, int num_threads, boolean isThreadPool, int maxNum) {
 		// config parameters
 		this.out = out;
@@ -54,6 +69,10 @@ public class DefaultScheduler implements Runnable {
 		hp = new HtmlParser();
 	}
 	
+	/**
+	 * begin the craw task
+	 * @param seed : initial url list
+	 */
 	public void runTask(List<URL> seed) {
 		this.preCraw(seed, (int)(0.1 * maxNum));
 		if(isThreadPool) {
@@ -95,6 +114,9 @@ public class DefaultScheduler implements Runnable {
 		craw();
 	}
 	
+	/**
+	 * logic of crawl process (multi-threaded)
+	 */
 	private void craw() {
 		while(true) {
 			if(count >= maxNum)
@@ -151,6 +173,12 @@ public class DefaultScheduler implements Runnable {
 		
 	}
 	
+	/**
+	 * pre-crawl is a single thread crawl process used to make 
+	 * "to visit" url queue not empty 
+	 * @param seed
+	 * @param initNum
+	 */
 	private void preCraw(List<URL> seed, int initNum) {
 		um.addURLList(seed);
 		

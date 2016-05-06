@@ -3,6 +3,11 @@ package outputer.sjtu.sk;
 import java.io.*;
 import java.util.*;
 
+/**
+ * one of the outputers : persist crawed data to a new html file
+ * @author ShenKai
+ *
+ */
 public class HtmlTableOutputer extends Outputer {
 	public boolean output(String path, List<String> data) {
 		File file = null;

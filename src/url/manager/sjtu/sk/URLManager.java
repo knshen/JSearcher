@@ -6,9 +6,17 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import util.sjtu.sk.BloomFilter;
 
+/**
+ * Manage "visited" urls and "to visit" urls
+ * Note that the operations to the data structures are not thread secure
+ * @author ShenKai
+ *
+ */
 public class URLManager {
+	// "to visit" urls queue (in memory)
 	volatile private Queue<URL> urls = new LinkedList<URL>();
 	//volatile private Set<URL> visited = new HashSet<URL>();
+	// bloom filter to check if a url is visited
 	volatile private BloomFilter<URL> bf_visited = new BloomFilter<URL>(2<<24);
 	
 	public boolean isVisited(URL url) {

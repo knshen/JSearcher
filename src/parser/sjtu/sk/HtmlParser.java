@@ -11,6 +11,11 @@ import downloader.sjtu.sk.HtmlDownloader;
 import logging.sjtu.sk.Logging;
 import url.manager.sjtu.sk.URL;
 
+/**
+ * Use JSoup to parse htmls
+ * @author ShenKai
+ *
+ */
 public class HtmlParser {
 	private Document doc = null;
 	
@@ -22,6 +27,12 @@ public class HtmlParser {
 		return parse(html, "");
 	}
 	
+	/**
+	 * extract url links in the html, also save the Document object
+	 * @param html : html string
+	 * @param base_url : the URL w.r.t the html string
+	 * @return new url links in the html 
+	 */
 	public List<URL> parse(String html, String base_url) {
 		doc = Jsoup.parse(html, base_url);
 		//doc = Jsoup.connect("https://leetcode.com/problemset/algorithms/").get();

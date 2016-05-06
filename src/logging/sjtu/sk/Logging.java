@@ -4,6 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.io.*;
 
+/**
+ * Log info to files
+ * @author ShenKai
+ *
+ */
 public class Logging {
 	private static BufferedWriter bw = null;
 	static {

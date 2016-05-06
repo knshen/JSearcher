@@ -23,7 +23,11 @@ public class Util {
 		return OperatingSystem.OTHERS;
 	}
 	
-	
+	/**
+	 * transform a string to MD5 code
+	 * @param s : string
+	 * @return MD5 code
+	 */
 	public final static String MD5(String s) {
         char hexDigits[]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};       
         try {
@@ -64,6 +68,15 @@ public class Util {
 		return encrypt(encrypt(str));
 	}
 	
+	/**
+	 * transform a user defined object to a DBObject
+	 * @param pojo
+	 * @param dto
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
 	public static DBObject serialize(Object pojo, String dto) throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
 		DBObject new_doc = new BasicDBObject();
 		Class<?> class_name = Class.forName(dto);
@@ -85,6 +98,16 @@ public class Util {
 		return new_doc;
 	}
 	
+	/**
+	 * the reverse process of serialize
+	 * @param obj
+	 * @param dto
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	public static Object deserialize(DBObject obj, String dto) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		Class<?> class_name = Class.forName(dto);
 		Object pojo = class_name.newInstance();

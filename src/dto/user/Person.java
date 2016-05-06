@@ -2,6 +2,13 @@ package dto.user;
 
 import java.util.*;
 import java.util.Map.Entry;
+
+/**
+ * This is a user defined DTO class (for inserting a object to DB)
+ * A DTO class must implement setter and getter for every field
+ * @author ShenKai
+ *
+ */
 public class Person {
 	private int age;
 	private String sex;

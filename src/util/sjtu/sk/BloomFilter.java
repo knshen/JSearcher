@@ -2,6 +2,13 @@ package util.sjtu.sk;
 
 import java.util.BitSet;
 
+/**
+ * Naive implementation of Bloom Filter
+ * Note that the operations to Bloom Filter are not thread secure
+ * @author ShenKai
+ *
+ * @param <T> : Data type of element
+ */
 public class BloomFilter<T> {
 	private class SimpleHash<T> {   
 	    private int cap;  

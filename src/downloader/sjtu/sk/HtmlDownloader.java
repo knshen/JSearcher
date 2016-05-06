@@ -12,7 +12,18 @@ import org.apache.http.util.EntityUtils;
 import logging.sjtu.sk.Logging;
 import url.manager.sjtu.sk.URL;
 
+/**
+ * Given a URL, download the html of a page
+ * @author ShenKai
+ *
+ */
 public class HtmlDownloader {
+	
+	/**
+	 * download html by a URL (by get method in HttpClient)
+	 * @param url : absolute url 
+	 * @return html code
+	 */
 	public String download(URL url) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
         
