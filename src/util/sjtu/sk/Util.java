@@ -12,7 +12,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class Util {
-	
+
 	public static int getCurrentOS() {
 		Properties prop = System.getProperties();
 		String os = prop.getProperty("os.name");
