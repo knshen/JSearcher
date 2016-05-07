@@ -101,7 +101,7 @@ public class Main {
         try {
             //创建一个get请求用来接收_xsrf信息
         	HttpGet get = new HttpGet("http://www.zhihu.com/");
-            //获取_xsrf
+            //获取_xsrf TODO Auto-generated method stub
             CloseableHttpResponse response = httpClient.execute(get);
             setCookie(response);
             String responseHtml = EntityUtils.toString(response.getEntity());
@@ -129,7 +129,7 @@ public class Main {
 
             //构造一个get请求，用来测试登录cookie是否拿到
             HttpGet g = new HttpGet("http://www.zhihu.com/question/following");
-            //得到post请求返回的cookie信息
+            //得到post请求返回的cookie信息 TODO Auto-generated method stub
             String c = setCookie(httpResponse);
             //将cookie注入到get请求头当中
             g.setHeader("Cookie",c);
