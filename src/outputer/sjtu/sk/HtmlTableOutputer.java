@@ -3,16 +3,23 @@ package outputer.sjtu.sk;
 import java.io.*;
 import java.util.*;
 
+import db.sjtu.sk.DBReader;
+import dto.user.LeetCodeTitleDTO;
+
 /**
- * one of the outputers : persist crawed data to a new html file
+ * one of the outputers : persist crawled data to a new html file
  * @author ShenKai
  *
  */
 public class HtmlTableOutputer extends Outputer {
-	public boolean output(String path, List<String> data) {
+	public boolean output(String path, Date date, String task_name, String dto) {
+		if(date == null)
+			date = new Date();
+		
 		File file = null;
 		BufferedWriter bw = null;
 		
+		List<Object> data = DBReader.readDataFromDB(date, task_name, dto, null, null);
 		try {
 			file = new File(path);
 			bw = new BufferedWriter(new FileWriter(file));
@@ -20,14 +27,12 @@ public class HtmlTableOutputer extends Outputer {
 			bw.write("<body>\n");
 			bw.write("<table>\n");
 			
-			for(String str : data) {				
-				String tmp[] = str.split("\\.");
-				if(tmp.length < 2)
-					continue;
+			for(Object obj : data) {
+				LeetCodeTitleDTO ltdto = (LeetCodeTitleDTO)obj;
 				
 				bw.write("<tr>\n");
-				String id = tmp[0].trim();
-				String title = tmp[1].trim();
+				String id = String.valueOf(ltdto.getId()).trim();
+				String title = ltdto.getTitle();
 				
 				bw.write("<td>");
 				bw.write(id);
@@ -58,11 +63,4 @@ public class HtmlTableOutputer extends Outputer {
 		return true;
 	}
 	
-	public static void main(String[] args) {
-		// unit test
-		Outputer out = new HtmlTableOutputer();
-		out.output("/home/knshen/test.html", Arrays.asList("1.aaa", "2.bbb", "3.ccc"));
-
-	}
-
 }

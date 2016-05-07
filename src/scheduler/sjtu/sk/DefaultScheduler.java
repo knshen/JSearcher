@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.jsoup.nodes.Document;
 
+import db.sjtu.sk.DBWriter;
 import downloader.sjtu.sk.HtmlDownloader;
 import logging.sjtu.sk.Logging;
 import outputer.sjtu.sk.HtmlTableOutputer;
@@ -35,7 +36,7 @@ public class DefaultScheduler implements Runnable {
 	private Outputer out = null;
 	private DataExtractor de = null;
 	
-	private List<String> total_data = new ArrayList<String>(); // global crawed data 
+	private List<Object> total_data = new ArrayList<Object>(); // global crawed data 
 	private int num_threads; // number of threads
 	private boolean isThreadPool = false;
 	private int count = 0; // number of pages have visited
@@ -73,7 +74,7 @@ public class DefaultScheduler implements Runnable {
 	 * begin the craw task
 	 * @param seed : initial url list
 	 */
-	public void runTask(List<URL> seed) {
+	public void runTask(List<URL> seed, String task_name, String dto) {
 		this.preCraw(seed, (int)(0.1 * maxNum));
 		if(isThreadPool) {
 			//TODO thread pool
@@ -82,6 +83,7 @@ public class DefaultScheduler implements Runnable {
 		}
 		else {
 			// non thread pool mode
+			//step 1: finish crawl taksks
 			List<Thread> workers = new ArrayList<Thread>();
 			for(int i=0; i<num_threads; i++) {
 				workers.add(new Thread(this));
@@ -96,6 +98,11 @@ public class DefaultScheduler implements Runnable {
 					ie.printStackTrace();
 				}
 			}
+			
+			//step 2: persist to DB (TODO buffered persistent)
+			DBWriter.writeData2DB(total_data, task_name, dto);
+			
+			//step 3: output to a file (optional) 
 			if(out != null) {
 				// output html file
 				String path = "";
@@ -104,7 +111,7 @@ public class DefaultScheduler implements Runnable {
 				else if(Util.getCurrentOS() == OperatingSystem.WINDOWS) 
 					path = "f://test.html";
 				
-				out.output(path, total_data);
+				out.output(path, new Date(), task_name, dto);
 			}
 				
 		}
@@ -143,7 +150,7 @@ public class DefaultScheduler implements Runnable {
 				continue;
 			}
 				
-			String html = hd.download(new_url);
+			String html = hd.download(new_url);			
 			if(html == null) 
 				continue;
 			
@@ -158,7 +165,7 @@ public class DefaultScheduler implements Runnable {
 			Logging.log(Thread.currentThread().getName() + " visiting: " + new_url.getURLValue());
 		
 			List<URL> new_links = hp.parse(html, new_url.getURLValue());
-			List<String> data = de.extract(hp.getDocument()); 
+			List<Object> data = de.extract(hp.getDocument()); 
 			lock.lock();
 			try {
 				if(data != null && data.size() > 0) 
@@ -198,7 +205,7 @@ public class DefaultScheduler implements Runnable {
 			Logging.log("preCraw: visiting: " + new_url.getURLValue());
 			// get links & extract data
 			List<URL> new_links = hp.parse(html, new_url.getURLValue());
-			List<String> data = de.extract(hp.getDocument());
+			List<Object> data = de.extract(hp.getDocument());
 			if(data != null && data.size() > 0) 
 				total_data.addAll(data);
 			
@@ -217,7 +224,7 @@ public class DefaultScheduler implements Runnable {
 		// config parameters
 		ds.config(new HtmlTableOutputer(), new LeetcodeProblemTitleExtractor(), 5, false, 100);
 		// run tasks
-		ds.runTask(Arrays.asList(seed));
-	}
+		ds.runTask(Arrays.asList(seed), "leetcodeProblemTitles", "dto.user.LeetCodeTitleDTO");
+	}			
 
 }

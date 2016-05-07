@@ -7,17 +7,25 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import dto.user.LeetCodeTitleDTO;
+
 public class LeetcodeProblemTitleExtractor extends DataExtractor {
 	
-	public List<String> extract(Document doc) {
-		List<String> res = new ArrayList<String>();
+	public List<Object> extract(Document doc) {
+		List<Object> res = new ArrayList<Object>();
 		if(doc == null)
 			return null;
 		
 		Elements eles = doc.select(".question-title");
-		for(Element ele : eles) 
-			res.add(ele.select("h3").text().trim());
-		
+		for(Element ele : eles) {
+			String str = ele.select("h3").text().trim();
+			String tmp[] = str.split("\\.");
+			if(tmp.length < 2)
+				continue;
+			LeetCodeTitleDTO dto = new LeetCodeTitleDTO(Integer.parseInt(tmp[0].trim()), tmp[1].trim());
+			res.add(dto);
+		}
+			
 		return res;
 	}
 	

@@ -20,6 +20,10 @@ public class LeetCodeTitleDTO {
 		this.title = title;
 	}
 
+	public LeetCodeTitleDTO() {
+		
+	}
+	
 	public LeetCodeTitleDTO(int id, String title) {
 		this.id = id;
 		this.title = title;
