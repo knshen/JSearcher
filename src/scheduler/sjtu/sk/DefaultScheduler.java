@@ -99,8 +99,9 @@ public class DefaultScheduler implements Runnable {
 				}
 			}
 			
-			//step 2: persist to DB (TODO buffered persistent)
+			//step 2: persist crawled data and visited urls to DB (TODO buffered persistent)
 			DBWriter.writeData2DB(total_data, task_name, dto);
+			um.flushVisitedURL2DB();
 			
 			//step 3: output to a file (optional) 
 			if(out != null) {

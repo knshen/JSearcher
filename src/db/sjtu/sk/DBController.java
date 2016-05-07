@@ -50,6 +50,14 @@ public class DBController {
 			db.createCollection(col_name, null);
 	}
 	
+	public boolean removeAll(String col_name) {
+		if(mg == null)
+			return false;
+		DBCollection dbc = db.getCollection(col_name);
+		dbc.drop();
+		return true;
+	}
+	
 	/**
 	 * insert a list of data to a collection. Note that the data is a list of
 	 * objects defined by user; User must pass the complete class name of his
@@ -190,7 +198,7 @@ public class DBController {
 	public static void main(String[] args) throws Exception {
 		// unit test
 		DBController dc = DBController.createDBController("localhost", 27017);
-		
+			
 		dc.createCol("demo");
 		List<Object> data = new ArrayList<Object>();
 		for(int i=25; i<=30; i++) {

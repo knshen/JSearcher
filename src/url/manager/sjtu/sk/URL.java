@@ -6,11 +6,23 @@ public class URL {
 	private String urlValue;
 	private String md5str;
 	
+	public URL() {
+		
+	}
+	
 	public URL(String url) {
 		this.urlValue = url;
 		this.md5str = Util.MD5(urlValue.trim());
 	}
 	
+	public void setUrlValue(String urlValue) {
+		this.urlValue = urlValue;
+	}
+
+	public void setMd5str(String md5str) {
+		this.md5str = md5str;
+	}
+
 	public String getMD5Str() {
 		return this.md5str;
 	}
