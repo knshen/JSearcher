@@ -10,6 +10,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import util.sjtu.sk.OperatingSystem;
+import util.sjtu.sk.Util;
 import logging.sjtu.sk.Logging;
 
 public class ImageExtractor extends DataExtractor {
@@ -21,13 +23,20 @@ public class ImageExtractor extends DataExtractor {
 		for(Element image : images) { 
 			String urlPath = image.attr("src");
 			Logging.log("download image: " + urlPath);
-			String savePath = "/home/knshen/imageData/image" + (id++) + ".jpg";
+			String savePath = "";
+			if(Util.getCurrentOS() == OperatingSystem.LINUX) 
+				savePath = "/home/knshen/imageData/image" + (id++) + ".jpg";
+			
+			else if(Util.getCurrentOS() == OperatingSystem.WINDOWS) 
+				savePath = "f://imageData//image" + (id++) + ".jpg";
+			
+			
 			downloadImage(urlPath, savePath);
 		}
 		return res;
 	}
 	
-	public boolean downloadImage(String urlPath, String savePath) {
+	private boolean downloadImage(String urlPath, String savePath) {
 		try {
 			Connection conn = Jsoup.connect(urlPath).ignoreContentType(true);		 
 			Response response = conn.execute();
