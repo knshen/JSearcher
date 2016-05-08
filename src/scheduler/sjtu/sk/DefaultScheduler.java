@@ -29,6 +29,7 @@ import util.sjtu.sk.Util;
  *
  */
 public class DefaultScheduler implements Runnable {
+	public static final double factor = 0.1;
 	
 	private HtmlDownloader hd = null;
 	private HtmlParser hp = null;
@@ -75,7 +76,7 @@ public class DefaultScheduler implements Runnable {
 	 * @param seed : initial url list
 	 */
 	public void runTask(List<URL> seed, String task_name, String dto) {
-		this.preCraw(seed, (int)(0.1 * maxNum));
+		this.preCraw(seed, (int)(factor * maxNum));
 		if(isThreadPool) {
 			//TODO thread pool
 			//ExecutorService fixedThreadPool = Executors.newFixedThreadPool(num_threads);

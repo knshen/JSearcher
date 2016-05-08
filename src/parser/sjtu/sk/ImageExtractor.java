@@ -19,37 +19,52 @@ public class ImageExtractor extends DataExtractor {
 		List<Object> res = new ArrayList<Object>();
 		
 		Elements images = doc.select("img[src]");
-		int id = 1;
+	
 		for(Element image : images) { 
 			String urlPath = image.attr("src");
 			Logging.log("download image: " + urlPath);
-			String savePath = "";
+			String savePath = Util.MD5(urlPath);
 			if(Util.getCurrentOS() == OperatingSystem.LINUX) 
-				savePath = "/home/knshen/imageData/image" + (id++) + ".jpg";
+				savePath = "imageData/" + savePath + ".jpg";
 			
 			else if(Util.getCurrentOS() == OperatingSystem.WINDOWS) 
-				savePath = "f://imageData//image" + (id++) + ".jpg";
+				savePath = "f://imageData//" + savePath + ".jpg";
 			
-			
-			downloadImage(urlPath, savePath);
+			if(downloadImage(urlPath, savePath))
+				res.add(savePath);
 		}
 		return res;
 	}
 	
+	/**
+	 * Use JSoup to download image file according to URL
+	 * @param urlPath : image URL
+	 * @param savePath : image save path (on disk)
+	 * @return : if succeed?
+	 */
 	private boolean downloadImage(String urlPath, String savePath) {
+		FileOutputStream outputStream = null;
 		try {
 			Connection conn = Jsoup.connect(urlPath).ignoreContentType(true);		 
 			Response response = conn.execute();
 			if(response.statusCode() != 404) {
 				byte data[] = response.bodyAsBytes();
-				FileOutputStream outputStream = new FileOutputStream(savePath);
+				outputStream = new FileOutputStream(savePath);
 	            outputStream.write(data);
-	            outputStream.close();
+	            
+	            return true;
 			}	
 		} catch(IOException ioe) {
 			ioe.printStackTrace();
 		}
-		
+		finally {
+			try {
+				outputStream.close();
+			} catch(IOException ioe) {
+				ioe.printStackTrace();
+			}
+			
+		}
 		return false;
 	}
 	
