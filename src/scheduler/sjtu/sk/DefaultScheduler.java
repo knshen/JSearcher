@@ -125,7 +125,10 @@ public class DefaultScheduler implements Runnable {
 	}
 	
 	/**
-	 * logic of crawl process (multi-threaded)
+	 * logic of crawl process (multi-threaded)	public static void main(String[] args) throws IOException {
+		DataExtractor de = new ImageExtractor();
+		Document doc = Jsoup.connect("http://sports.qq.com/nba/").get();
+		de.extract(doc);
 	 */
 	private void craw() {
 		while(true) {
@@ -235,7 +238,7 @@ public class DefaultScheduler implements Runnable {
 		//demo 2: crawl images
 		URL seed = new URL("http://ent.qq.com/star/");
 		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
-		ds.config(null, new ImageExtractor(), 3, false, 50);
+		ds.config(null, new ImageExtractor(), 3, false, 10);
 		ds.runTask(Arrays.asList(seed), "qqStarPic", "dto.user.Picture");
 	}			
 

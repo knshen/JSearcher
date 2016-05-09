@@ -3,6 +3,7 @@ package demo;
 import java.io.*;
 import java.util.*;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -22,11 +23,7 @@ import org.jsoup.nodes.Element;
 public class MockLogin {
 	private static CloseableHttpClient httpClient = HttpClients.createDefault();  
     private static HttpClientContext context = new HttpClientContext();  
-   
-    private static String lt = "";
-    private static String execution = "";
-    private static String _eventId = "";
-    private static String csrfmiddlewaretoken = "";
+    private static Header locationHeader = null;
     
 	public static String sendGet(String url) {  
         CloseableHttpResponse response = null;  
@@ -70,6 +67,7 @@ public class MockLogin {
             // 得到response的内容  
             content = EntityUtils.toString(entity);  
             //　关闭输入流  
+            locationHeader = response.getFirstHeader("Location");
             EntityUtils.consume(entity);  
             return content;  
         } catch (Exception e) {  
@@ -86,55 +84,60 @@ public class MockLogin {
         return content;  
     }  
     
-    private static void fetchCSDNParam(String url) throws IOException {  
-        String html = sendGet(url);  
+    private static Map<String, String> fetchCSDNParam(String url) throws IOException {  
+    	Map<String, String> data = new HashMap<String, String>();
+    	
+    	String html = sendGet(url);  
         Document doc = Jsoup.parse(html);  
         Element form = doc.select(".user-pass").get(0);  
-        lt = form.select("input[name=lt]").get(0).val();  
-        execution = form.select("input[name=execution]").get(0).val();  
-        _eventId = form.select("input[name=_eventId]").get(0).val();  
-        System.out.println("获取成功。。。。。");  
+        String lt = form.select("input[name=lt]").get(0).val();  
+        String execution = form.select("input[name=execution]").get(0).val();  
+        String _eventId = form.select("input[name=_eventId]").get(0).val();  
+       
+        data.put("lt", lt);
+        data.put("execution", execution);
+        data.put("_eventId", _eventId);
+        
+        System.out.println("获取成功。。。。。"); 
+        return data;
     }  
     
-    public static boolean mockLogin(String url, String username, String password) {  
-    	// sjtu bbs
-    	//id:knshen
-    	//pw:530530
-    	//submit:login
-    	
+    public static boolean mockLogin(String url, String username, String password) throws Exception {  
     	System.out.println("开始登陆。。。"); 
         boolean result = false;  
+        
+        //Map<String, String> data = fetchCSDNParam(url);
         List<NameValuePair> nvps = new ArrayList<NameValuePair>();  
         //nvps.add(new BasicNameValuePair("username", username));  
         //nvps.add(new BasicNameValuePair("password", password));  
-        //nvps.add(new BasicNameValuePair("lt", lt));  
-        //nvps.add(new BasicNameValuePair("execution", execution));  
-        //nvps.add(new BasicNameValuePair("_eventId", _eventId));  
-        nvps.add(new BasicNameValuePair("id", "knshen"));
-        nvps.add(new BasicNameValuePair("pw", "530530"));
-        nvps.add(new BasicNameValuePair("submit", "login"));
+        //nvps.add(new BasicNameValuePair("lt", data.get("lt")));  
+        //nvps.add(new BasicNameValuePair("execution", data.get("executio")));  
+        //nvps.add(new BasicNameValuePair("_eventId", data.get("_eventId")));  
+        //nvps.add(new BasicNameValuePair("id", "knshen"));
+        //nvps.add(new BasicNameValuePair("pw", "530530"));
+        //nvps.add(new BasicNameValuePair("submit", "login"));
+        nvps.add(new BasicNameValuePair("email", username));
+        nvps.add(new BasicNameValuePair("password", password));
         
-        String ret = sendPost(url, nvps);  
+        String ret = sendPost(url, nvps);
+        String info = locationHeader.getValue();
+        
+        String welcome = MockLogin.sendGet(info);
+        System.out.println(welcome);
         if (ret.indexOf("redirect_back") > -1) {  
         	System.out.println("登陆成功。。。。。");  
             result = true;  
         } else if (ret.indexOf("登录太频繁") > -1) {  
         	System.out.println("登录太频繁");
-    	// get request to get form dataknshe
-    	String html = sendGet(url);  
-        Document doc = Jsoup.parse(html);  
-        Element form = doc.select(".form-signin").get(0);  
-        csrfmiddlewaretoken = form.select("input[name=csrfmiddlewaretoken]").get(0).val();
-    	
+    	// get request to get form dataknshe    	
         } else {  
         	System.out.println("登陆失败。。。。。");  
         }  
         return result;  
     }  
-	public static void main(String[] args) throws Exception {
-		//csrfmiddlewaretoken
-		String url = "https://bbs.sjtu.edu.cn/file/bbs/index/index.htm";
-		//MockLogin.fetchCSDNParam(url);
+	public static void main(String[] args) throws Exception {		
+		String url = "http://www.renren.com/PLogin.do";
+		
 		MockLogin.mockLogin(url, "572451704@qq.com", "sk530530");
 	}
 
