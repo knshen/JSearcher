@@ -12,7 +12,20 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class Util {
-
+	public static boolean isURLLegal(String url) {
+		if(url == null)
+			return false;
+		url = url.trim();
+		
+		if(url.equals(""))
+			return false;
+		
+		if(!(url.startsWith("http://") || url.startsWith("https://"))) 
+			return false;
+		
+		return true;
+	}
+	
 	public static int getCurrentOS() {
 		Properties prop = System.getProperties();
 		String os = prop.getProperty("os.name");

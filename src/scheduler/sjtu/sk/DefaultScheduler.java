@@ -15,6 +15,7 @@ import outputer.sjtu.sk.HtmlTableOutputer;
 import outputer.sjtu.sk.Outputer;
 import parser.sjtu.sk.DataExtractor;
 import parser.sjtu.sk.HtmlParser;
+import parser.sjtu.sk.ImageExtractor;
 import parser.sjtu.sk.LeetcodeProblemTitleExtractor;
 import url.manager.sjtu.sk.URL;
 import url.manager.sjtu.sk.URLManager;
@@ -220,6 +221,8 @@ public class DefaultScheduler implements Runnable {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		/*
+		//demo 1: crawl leetcode problem title
 		URL seed = new URL("https://leetcode.com/problemset/algorithms/");
 		//create scheduler instance
 		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
@@ -227,6 +230,13 @@ public class DefaultScheduler implements Runnable {
 		ds.config(new HtmlTableOutputer(), new LeetcodeProblemTitleExtractor(), 5, false, 100);
 		// run tasks
 		ds.runTask(Arrays.asList(seed), "leetcodeProblemTitles", "dto.user.LeetCodeTitleDTO");
+		*/
+	
+		//demo 2: crawl images
+		URL seed = new URL("http://ent.qq.com/star/");
+		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
+		ds.config(null, new ImageExtractor(), 3, false, 50);
+		ds.runTask(Arrays.asList(seed), "qqStarPic", "dto.user.Picture");
 	}			
 
 }

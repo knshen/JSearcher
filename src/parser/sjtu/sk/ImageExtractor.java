@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import dto.user.Picture;
 import util.sjtu.sk.OperatingSystem;
 import util.sjtu.sk.Util;
 import logging.sjtu.sk.Logging;
@@ -22,16 +23,19 @@ public class ImageExtractor extends DataExtractor {
 	
 		for(Element image : images) { 
 			String urlPath = image.attr("src");
-			Logging.log("download image: " + urlPath);
+			//Logging.log("download image: " + urlPath);
 			String savePath = Util.MD5(urlPath);
 			if(Util.getCurrentOS() == OperatingSystem.LINUX) 
 				savePath = "imageData/" + savePath + ".jpg";
 			
 			else if(Util.getCurrentOS() == OperatingSystem.WINDOWS) 
-				savePath = "f://imageData//" + savePath + ".jpg";
+				savePath = "imageData/" + savePath + ".jpg";
 			
-			if(downloadImage(urlPath, savePath))
-				res.add(savePath);
+			if(downloadImage(urlPath, savePath)) {
+				Picture pic = new Picture(savePath, urlPath);
+				res.add(pic);
+			}
+				
 		}
 		return res;
 	}
@@ -43,6 +47,10 @@ public class ImageExtractor extends DataExtractor {
 	 * @return : if succeed?
 	 */
 	private boolean downloadImage(String urlPath, String savePath) {
+		if(!Util.isURLLegal(urlPath))
+			return false;
+		
+		urlPath = urlPath.trim();
 		FileOutputStream outputStream = null;
 		try {
 			Connection conn = Jsoup.connect(urlPath).ignoreContentType(true);		 
@@ -59,7 +67,9 @@ public class ImageExtractor extends DataExtractor {
 		}
 		finally {
 			try {
-				outputStream.close();
+				if(outputStream != null) 
+					outputStream.close();
+								
 			} catch(IOException ioe) {
 				ioe.printStackTrace();
 			}
