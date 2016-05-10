@@ -16,7 +16,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 public class HtmlUnitDemo {
-	public static void test() throws Exception {
+	public static void loginGithub() throws Exception {
 		final WebClient webClient = new WebClient(BrowserVersion.getDefault());  
         //1.获取某个待测页面  
 		webClient.getOptions().setCssEnabled(false);
@@ -48,7 +48,7 @@ public class HtmlUnitDemo {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		HtmlUnitDemo.test();
+		//HtmlUnitDemo.loginGithub();;
 
 	}
 
