@@ -52,5 +52,6 @@
 	<classpathentry kind="lib" path="libs/snakeyaml-1.15.jar"/>
 	<classpathentry kind="lib" path="libs/spatial4j-0.5.jar"/>
 	<classpathentry kind="lib" path="libs/t-digest-3.0.jar"/>
+	<classpathentry kind="lib" path="libs/javax.mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

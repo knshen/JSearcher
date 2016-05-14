@@ -80,7 +80,7 @@ public class ESDemo {
 		  		//.setQuery(QueryBuilders.matchQuery("insterst", "business maimeng"))
 		        //.setQuery(QueryBuilders.termQuery("location", "G"))                 // Query
 		        //.setPostFilter(QueryBuilders.rangeQuery("age").from(30).to(40))     // Filter
-		        //.setFrom(0).setSize(60).setExplain(true)
+		        //.setFrom(0).setSize(60).setExplain(true)		     
 		        .execute()
 		        .actionGet();
 		
