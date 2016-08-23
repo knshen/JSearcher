@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -112,6 +113,35 @@ public class Util {
 	}
 	
 	/**
+	 * transform a user defined object to a Map
+	 * @param dto
+	 * @param pojo
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
+	public static Map<String, Object> serialize(String dto, Object pojo) throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Class<?> class_name = Class.forName(dto);
+		
+		Field[] fields = class_name.getDeclaredFields();
+		Method[] methods = class_name.getDeclaredMethods();
+
+		for(Field f : fields) {
+			String fn = f.getName().toLowerCase();
+			for(Method m : methods) {
+				String mn = m.getName().toLowerCase();
+				if(mn.startsWith("get") && mn.indexOf(fn) != -1) {
+					map.put(f.getName(), m.invoke(pojo, null));
+					break;
+				}
+			}
+		}
+		return map;
+	}
+	
+	/**
 	 * the reverse process of serialize
 	 * @param obj
 	 * @param dto
@@ -139,6 +169,36 @@ public class Util {
 			}
 		}
 		
+		return pojo;
+	}
+	
+	/**
+	 * deserialize: from a map to a pojo object
+	 * @param map
+	 * @param dto
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	public static Object deserialize(Map<String, Object> map, String dto) throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		Class<?> class_name = Class.forName(dto);
+		Object pojo = class_name.newInstance();
+		
+		Method[] methods = class_name.getDeclaredMethods();
+		Field[] fields = class_name.getDeclaredFields();
+		
+		for(Field f : fields) {
+			String fn = f.getName().toLowerCase();
+			for(Method m : methods) {
+				String mn = m.getName().toLowerCase();
+				if(mn.startsWith("set") && mn.indexOf(fn) != -1) {
+					m.invoke(pojo, map.get(f.getName()));
+				}
+			}
+		}
+
 		return pojo;
 	}
 	

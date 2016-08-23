@@ -3,8 +3,8 @@ package outputer.sjtu.sk;
 import java.io.*;
 import java.util.*;
 
-import db.sjtu.sk.DBReader;
 import dto.user.LeetCodeTitleDTO;
+import storage.sjtu.sk.DataReader;
 
 /**
  * one of the outputers : persist crawled data to a new html file
@@ -19,7 +19,9 @@ public class HtmlTableOutputer extends Outputer {
 		File file = null;
 		BufferedWriter bw = null;
 		
-		List<Object> data = DBReader.readDataFromDB(date, task_name, dto, null, null);
+		// read data from elasticsearch
+		List<Object> data = DataReader.readDataFromES(task_name, dto);
+		
 		try {
 			file = new File(path);
 			bw = new BufferedWriter(new FileWriter(file));

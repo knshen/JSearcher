@@ -1,4 +1,4 @@
-package db.sjtu.sk;
+package storage.sjtu.sk;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;

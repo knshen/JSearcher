@@ -3,6 +3,7 @@ package demo;
 import java.net.InetAddress;
 import java.util.*;
 
+import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
@@ -13,8 +14,10 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.SearchHits;
 
 
@@ -73,23 +76,70 @@ public class ESDemo {
 
 	}
 	
-	public static void search() {
-		SearchResponse response = client.prepareSearch("nba")
-		        .setTypes("player")
-		        .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-		  		//.setQuery(QueryBuilders.matchQuery("insterst", "business maimeng"))
-		        //.setQuery(QueryBuilders.termQuery("location", "G"))                 // Query
-		        //.setPostFilter(QueryBuilders.rangeQuery("age").from(30).to(40))     // Filter
-		        //.setFrom(0).setSize(60).setExplain(true)		     
+	public static long count() {
+		SearchResponse response = client.prepareSearch("leetcode")
+		        .setTypes("problemTitle")
+		        .setQuery(QueryBuilders.matchAllQuery())               
+		        .setFrom(0).setSize(0).setExplain(true)		     
 		        .execute()
 		        .actionGet();
 		
+		return response.getHits().getTotalHits();
+	}
+	
+	public static void delete() {
+		long num = count();
+		SearchResponse response = client.prepareSearch("leetcode")
+		        .setTypes("problemTitle")
+		        .setQuery(QueryBuilders.matchAllQuery())               
+		        .setFrom(0).setSize((int)num).setExplain(true)		     
+		        .execute()
+		        .actionGet();
 		SearchHits hits = response.getHits();
 		
+		List<String> keys = new ArrayList<String>();
 		System.out.println("hits: " + hits.getTotalHits());
-		for(SearchHit sh : hits.getHits()) 
-			System.out.println(sh.getSourceAsString() + " " + sh.getScore());
+		for(SearchHit sh : hits.getHits()) {	
+			keys.add(sh.getId());
+			//System.out.println(sh.getId());
+		}
 		
+		//System.out.println(keys.size());
+		for(String key : keys) {
+			client.prepareDelete()
+					.setIndex("leetcode")
+					.setType("problemTitle")
+					.setId(key)
+					.execute()
+					.actionGet();
+		}
+	}
+	
+	public static void search() {
+		SearchResponse response = client.prepareSearch("leetcode")
+		        .setTypes("problemTitle")
+		        //.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+		  		//.setQuery(QueryBuilders.matchQuery("insterst", "business maimeng"))
+		        //.setQuery(QueryBuilders.termQuery("location", "PG"))                 // Query
+		        //.setPostFilter(QueryBuilders.rangeQuery("age").from(30).to(40))     // Filter
+		        .setFrom(0).setSize(1000).setExplain(true)		     
+		        .execute()
+		        .actionGet();
+		
+		System.out.println("---------------------");
+		System.out.println(response);
+		System.out.println("---------------------");
+		
+		SearchHits hits = response.getHits();
+		
+		
+		System.out.println("hits: " + hits.getTotalHits());
+		for(SearchHit sh : hits.getHits()) {	
+			
+			//Map<String, Object> map = sh.getSource();
+			System.out.println(sh.getSourceAsString() + " " + sh.getScore());
+		}
+			
 	}
 	
 	public static void close() {
@@ -99,7 +149,9 @@ public class ESDemo {
 	public static void main(String[] args) throws Exception {
 		ESDemo.init();
 		//ESDemo.insert();
-		ESDemo.search();
+		ESDemo.delete();
+		//System.out.println(ESDemo.count());
+		//ESDemo.search();
 		ESDemo.close();
 
 	}

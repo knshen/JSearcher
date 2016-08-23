@@ -8,7 +8,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.jsoup.nodes.Document;
 
-import db.sjtu.sk.DBWriter;
 import downloader.sjtu.sk.HtmlDownloader;
 import logging.sjtu.sk.Logging;
 import outputer.sjtu.sk.HtmlTableOutputer;
@@ -17,9 +16,11 @@ import parser.sjtu.sk.DataExtractor;
 import parser.sjtu.sk.HtmlParser;
 import parser.sjtu.sk.ImageExtractor;
 import parser.sjtu.sk.LeetcodeProblemTitleExtractor;
+import storage.sjtu.sk.DataWriter;
 import url.manager.sjtu.sk.URL;
 import url.manager.sjtu.sk.URLManager;
 import util.sjtu.sk.OperatingSystem;
+import util.sjtu.sk.PersistentStyle;
 import util.sjtu.sk.Util;
 
 /**
@@ -30,8 +31,6 @@ import util.sjtu.sk.Util;
  *
  */
 public class DefaultScheduler implements Runnable {
-	public static final double factor = 0.1;
-	
 	private HtmlDownloader hd = null;
 	private HtmlParser hp = null;
 	private URLManager um = null;
@@ -44,6 +43,7 @@ public class DefaultScheduler implements Runnable {
 	private int count = 0; // number of pages have visited
 	private final Lock lock = new ReentrantLock(); 
 	private int maxNum = 0; // max number of pages allowed
+	private int persistent_style = PersistentStyle.ES; // save data to MongoDB or ElasticSearch?
 	
 	public static DefaultScheduler createDefaultScheduler() {
 		return new DefaultScheduler();
@@ -57,13 +57,25 @@ public class DefaultScheduler implements Runnable {
 	 * @param isThreadPool
 	 * @param maxNum
 	 */
-	public final void config(Outputer out, DataExtractor de, int num_threads, boolean isThreadPool, int maxNum) {
+	public final void config(Map<String, Object> paras) {
 		// config parameters
-		this.out = out;
-		this.de = de;
-		this.num_threads = num_threads;
-		this.isThreadPool = isThreadPool;
-		this.maxNum = maxNum;
+		if(paras == null)
+			return;
+		for(Map.Entry<String, Object> para : paras.entrySet()) {
+			String key = para.getKey().toLowerCase();
+			if(key.equals("outputer"))
+				this.out = (Outputer)(para.getValue());
+			if(key.equals("dataextractor"))
+				this.de = (DataExtractor)(para.getValue());
+			if(key.equals("num_threads"))
+				this.num_threads = (int)(para.getValue());
+			if(key.equals("isthreadpool"))
+				this.isThreadPool = (boolean)(para.getValue());
+			if(key.equals("maxnum"))
+				this.maxNum = (int)(para.getValue());
+			if(key.equals("persistent_style"))
+				this.persistent_style = (int)(para.getValue());
+		}
 	}
 	
 	private DefaultScheduler() {
@@ -73,11 +85,12 @@ public class DefaultScheduler implements Runnable {
 	}
 	
 	/**
-	 * begin the craw task
-	 * @param seed : initial url list
+	 * 
+	 * @param seed : seed URLs
+	 * @param task_name : indexName-typeName
+	 * @param dto : User defined data type
 	 */
 	public void runTask(List<URL> seed, String task_name, String dto) {
-		this.preCraw(seed, (int)(factor * maxNum));
 		if(isThreadPool) {
 			//TODO thread pool
 			//ExecutorService fixedThreadPool = Executors.newFixedThreadPool(num_threads);
@@ -85,7 +98,8 @@ public class DefaultScheduler implements Runnable {
 		}
 		else {
 			// non thread pool mode
-			//step 1: finish crawl taksks
+			//step 1: finish crawl tasks
+			this.um.addURLList(seed);
 			List<Thread> workers = new ArrayList<Thread>();
 			for(int i=0; i<num_threads; i++) {
 				workers.add(new Thread(this));
@@ -102,8 +116,11 @@ public class DefaultScheduler implements Runnable {
 			}
 			
 			//step 2: persist crawled data and visited urls to DB (TODO buffered persistent)
-			DBWriter.writeData2DB(total_data, task_name, dto);
-			um.flushVisitedURL2DB();
+			if(this.persistent_style == PersistentStyle.DB)
+				DataWriter.writeData2DB(total_data, task_name, dto);
+			else
+				DataWriter.writeData2ES(total_data, task_name, dto); 
+			//um.flushVisitedURL2DB();
 			
 			//step 3: output to a file (optional) 
 			if(out != null) {
@@ -121,7 +138,7 @@ public class DefaultScheduler implements Runnable {
 	}
 	
 	public void run() {
-		craw();
+		crawl();
 	}
 	
 	/**
@@ -130,7 +147,7 @@ public class DefaultScheduler implements Runnable {
 		Document doc = Jsoup.connect("http://sports.qq.com/nba/").get();
 		de.extract(doc);
 	 */
-	private void craw() {
+	private void crawl() {
 		while(true) {
 			if(count >= maxNum)
 				break;
@@ -148,7 +165,7 @@ public class DefaultScheduler implements Runnable {
 			// no url to visit (url queue is empty!)
 			if(new_url == null) {
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(1000);
 				} catch(InterruptedException ie) {
 					ie.printStackTrace();
 				}
@@ -187,59 +204,35 @@ public class DefaultScheduler implements Runnable {
 	}
 	
 	/**
-	 * pre-crawl is a single thread crawl process used to make 
-	 * "to visit" url queue not empty 
-	 * @param seed
-	 * @param initNum
-	 */
-	private void preCraw(List<URL> seed, int initNum) {
-		um.addURLList(seed);
-		
-		while(true) {
-			if(count >= initNum)
-				break;
-			
-			URL new_url = um.fetchOneURL();
-			// no url to visit (url queue is empty!)
-			if(new_url == null)
-				break;
-			String html = hd.download(new_url);
-			if(html == null) 
-				continue;
-			
-			count++;
-			Logging.log("preCraw: visiting: " + new_url.getURLValue());
-			// get links & extract data
-			List<URL> new_links = hp.parse(html, new_url.getURLValue());
-			List<Object> data = de.extract(hp.getDocument());
-			if(data != null && data.size() > 0) 
-				total_data.addAll(data);
-			
-			um.addURLList(new_links);
-		}
-	}
-	
-	/**
 	 * this is the entrance of demo test
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		/*
+		
 		//demo 1: crawl leetcode problem title
 		URL seed = new URL("https://leetcode.com/problemset/algorithms/");
 		//create scheduler instance
 		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
 		// config parameters
-		ds.config(new HtmlTableOutputer(), new LeetcodeProblemTitleExtractor(), 5, false, 100);
+		Map<String, Object> paras = new HashMap<String, Object>();
+		paras.put("OutPuter", new HtmlTableOutputer());
+		paras.put("dataExtractor", new LeetcodeProblemTitleExtractor());
+		paras.put("num_threads", 10);
+		paras.put("isThreadPool", false);
+		paras.put("maxNum", 30);
+		paras.put("persistent_style", PersistentStyle.ES);
+		ds.config(paras);
+		
 		// run tasks
-		ds.runTask(Arrays.asList(seed), "leetcodeProblemTitles", "dto.user.LeetCodeTitleDTO");
-		*/
-	
+		ds.runTask(Arrays.asList(seed), "leetcode-problemTitle", "dto.user.LeetCodeTitleDTO");
+		
+		/*
 		//demo 2: crawl images
 		URL seed = new URL("http://ent.qq.com/star/");
 		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
 		ds.config(null, new ImageExtractor(), 3, false, 10);
 		ds.runTask(Arrays.asList(seed), "qqStarPic", "dto.user.Picture");
+		*/
 	}			
 
 }

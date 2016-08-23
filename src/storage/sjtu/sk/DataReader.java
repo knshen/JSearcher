@@ -1,4 +1,4 @@
-package db.sjtu.sk;
+package storage.sjtu.sk;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 import url.manager.sjtu.sk.URL;
 import util.sjtu.sk.Triple;
 
-public class DBReader {
+public class DataReader {
 	public static List<Object> readDataFromDB(Date date, String col_name, String dto, List<List<Triple>> filter, List<String> keys) {
 		DBController dc = DBController.createDBController("localhost", 27017);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -18,6 +18,15 @@ public class DBReader {
 		}
 		return dc.queryByWhere(col_name, dto, filter, keys);
 		
+	}
+	
+	public static List<Object> readDataFromES(String task_name, String dto) {
+		String index = task_name.split("-")[0];
+		String type = task_name.split("-")[1];
+		
+		IndexController ec = IndexController.createIndexControllerInstance("localhost");
+		
+		return ec.searchAll(index, type, dto);	
 	}
 	
 	public static List<URL> readVisitedURLFromDB(Date date) {
@@ -36,6 +45,6 @@ public class DBReader {
 	
 	public static void main(String args[]) {
 		//DBReader.readDataFromDB(new Date(), "leetcodeProblemTitles", "dto.user.LeetCodeTitleDTO", null, null);
-		DBReader.readVisitedURLFromDB(new Date());
+		DataReader.readVisitedURLFromDB(new Date());
 	}
 }

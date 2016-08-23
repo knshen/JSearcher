@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import db.sjtu.sk.DBWriter;
+import storage.sjtu.sk.DataWriter;
 import util.sjtu.sk.BloomFilter;
 
 /**
@@ -21,7 +21,7 @@ public class URLManager {
 	// bloom filter to check if a url is visited
 	volatile private BloomFilter<URL> bf_visited = new BloomFilter<URL>(2<<24);
 	// must ensure the URL in the list is distinct
-	volatile private List<URL> visited = new ArrayList<URL>();
+	//volatile private List<URL> visited = new ArrayList<URL>();
 			
 	public boolean isVisited(URL url) {
 		return bf_visited.contains(url);
@@ -31,10 +31,11 @@ public class URLManager {
 		return urls.size();
 	}
 	
+	/*
 	public void flushVisitedURL2DB() {
 		DBWriter.writeVisitedURL2DB(visited);
 		visited = new ArrayList<URL>();
-	}
+	}*/
 	
 	public boolean addOneURL(URL new_url) {
 		if(!isVisited(new_url)) {
@@ -54,10 +55,10 @@ public class URLManager {
 	
 	public URL fetchOneURL() {
 		if(!urls.isEmpty()) {
-			visited.add(urls.peek());
+			//visited.add(urls.peek());
 			
-			if(visited.size() >= MAX_SIZE_VISITED) 
-				this.flushVisitedURL2DB();
+			//if(visited.size() >= MAX_SIZE_VISITED) 
+			//	this.flushVisitedURL2DB();
 			
 			return urls.poll();
 		}
