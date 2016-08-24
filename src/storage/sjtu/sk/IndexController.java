@@ -12,6 +12,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -92,15 +93,13 @@ public class IndexController {
 		SearchResponse response = null;
 		SearchRequestBuilder srb = client.prepareSearch(index)
 		        	.setTypes(type)	
-		        	.setQuery(QueryBuilders.matchAllQuery());
+		        	.setSearchType(SearchType.SCAN)
+		        	.setScroll(new TimeValue(60000))
+		        	.setQuery(QueryBuilders.matchAllQuery())
+		        	.setSize(5);
 		
-		int pages = (int)Math.ceil(count(index, type) / PAGE_SIZE);
-		for(int i=0; i<pages; i++) {
-			// one page
-			response = srb.setFrom(i * (int)PAGE_SIZE).setSize((int)PAGE_SIZE).setExplain(true)
-					.execute()
-					.actionGet();
-			
+		response = srb.execute().actionGet();
+		while(true) {
 			SearchHits hits = response.getHits();
 			for(SearchHit sh : hits.getHits()) {
 				try {
@@ -117,10 +116,16 @@ public class IndexController {
 		        } catch(InvocationTargetException ite) {
 	    			ite.printStackTrace();
 	    		}     		
-			}
-			System.out.println("----------------------");
-		}
-
+			} // end for
+			System.out.println("-------------------");
+			response = client.prepareSearchScroll(response.getScrollId())
+						.setScroll(new TimeValue(60000)).execute().actionGet();
+		
+			if (response.getHits().getHits().length == 0) 
+		        break;
+			
+		} // end while
+	
 		return res;
 	}
 	
@@ -147,7 +152,7 @@ public class IndexController {
 		SearchHits hits = response.getHits();
 		
 		List<String> keys = new ArrayList<String>();
-		System.out.println("hits: " + hits.getTotalHits());
+		//System.out.println("hits: " + hits.getTotalHits());
 		for(SearchHit sh : hits.getHits()) 
 			keys.add(sh.getId());
 					
@@ -164,7 +169,8 @@ public class IndexController {
 
 	public static void main(String[] args) {
 		IndexController ic = IndexController.createIndexControllerInstance("loalhost");
-		ic.searchAll("leetcode", "problemTitle", "dto.user.LeetCodeTitleDTO");	
+		//ic.searchAll("leetcode", "problemTitle", "dto.user.LeetCodeTitleDTO");	
+		System.out.println(ic.count("leetcode", "problemTitle"));
 	}
 
 }

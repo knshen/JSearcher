@@ -3,6 +3,7 @@ package storage.sjtu.sk;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import logging.sjtu.sk.Logging;
 import url.manager.sjtu.sk.URL;
 
 public class DataWriter {
@@ -27,8 +28,9 @@ public class DataWriter {
 		
 		
 		if(ec.count(index, type) > 0) {
+			Logging.log("delete before insert!\n");
 			ec.delete(index, type);
-			ec.delete(index, type);
+			//ec.delete(index, type);
 		} 
 			
 		ec.insert(data, index, type, dto);

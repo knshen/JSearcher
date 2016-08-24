@@ -215,11 +215,11 @@ public class DefaultScheduler implements Runnable {
 		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
 		// config parameters
 		Map<String, Object> paras = new HashMap<String, Object>();
-		paras.put("OutPuter", new HtmlTableOutputer());
+		//paras.put("OutPuter", new HtmlTableOutputer());
 		paras.put("dataExtractor", new LeetcodeProblemTitleExtractor());
 		paras.put("num_threads", 10);
 		paras.put("isThreadPool", false);
-		paras.put("maxNum", 30);
+		paras.put("maxNum", 10);
 		paras.put("persistent_style", PersistentStyle.ES);
 		ds.config(paras);
 		
