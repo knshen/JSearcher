@@ -46,6 +46,9 @@ public class DefaultScheduler implements Runnable {
 	private int maxNum = 0; // max number of pages allowed
 	private int persistent_style = PersistentStyle.ES; // save data to MongoDB or ElasticSearch?
 	
+	private String task_name = "";
+	private String dto = "";
+	
 	public static DefaultScheduler createDefaultScheduler() {
 		return new DefaultScheduler();
 	}
@@ -76,6 +79,10 @@ public class DefaultScheduler implements Runnable {
 				this.maxNum = (int)(para.getValue());
 			if(key.equals("persistent_style"))
 				this.persistent_style = (int)(para.getValue());
+			if(key.equals("task_name"))
+				this.task_name = para.getValue().toString();
+			if(key.equals("dto"))
+				this.dto = para.getValue().toString();
 		}
 	}
 	
@@ -91,7 +98,7 @@ public class DefaultScheduler implements Runnable {
 	 * @param task_name : indexName-typeName
 	 * @param dto : User defined data type
 	 */
-	public void runTask(List<URL> seed, String task_name, String dto) {
+	public void runTask(List<URL> seed) {
 		if(isThreadPool) {
 			//TODO thread pool
 			//ExecutorService fixedThreadPool = Executors.newFixedThreadPool(num_threads);
@@ -143,10 +150,7 @@ public class DefaultScheduler implements Runnable {
 	}
 	
 	/**
-	 * logic of crawl process (multi-threaded)	public static void main(String[] args) throws IOException {
-		DataExtractor de = new ImageExtractor();
-		Document doc = Jsoup.connect("http://sports.qq.com/nba/").get();
-		de.extract(doc);
+	 * logic of crawl process
 	 */
 	private void crawl() {
 		while(true) {
@@ -154,7 +158,7 @@ public class DefaultScheduler implements Runnable {
 				break;
 			
 			URL new_url = null;
-			
+			// fetch a URL from toVisit list
 			lock.lock();	
 			try {
 				new_url = um.fetchOneURL();
@@ -222,10 +226,12 @@ public class DefaultScheduler implements Runnable {
 		paras.put("isThreadPool", false);
 		paras.put("maxNum", 30);
 		paras.put("persistent_style", PersistentStyle.ES);
+		paras.put("task_name", "leetcode-problem");
+		paras.put("dto", "dto.user.LeetCodeProblemDTO");
 		ds.config(paras);
 		
 		// run tasks
-		ds.runTask(Arrays.asList(seed), "leetcode-problem", "dto.user.LeetCodeProblemDTO");
+		ds.runTask(Arrays.asList(seed));
 		
 		/*
 		//demo 2: crawl images
