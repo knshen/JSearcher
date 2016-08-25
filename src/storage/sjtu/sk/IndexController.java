@@ -117,7 +117,7 @@ public class IndexController {
 	    			ite.printStackTrace();
 	    		}     		
 			} // end for
-			System.out.println("-------------------");
+			//System.out.println("-------------------");
 			response = client.prepareSearchScroll(response.getScrollId())
 						.setScroll(new TimeValue(60000)).execute().actionGet();
 		
@@ -169,8 +169,9 @@ public class IndexController {
 
 	public static void main(String[] args) {
 		IndexController ic = IndexController.createIndexControllerInstance("loalhost");
-		//ic.searchAll("leetcode", "problemTitle", "dto.user.LeetCodeTitleDTO");	
+		//ic.searchAll("leetcode", "problem", "dto.user.LeetCodeProblemDTO");	
 		System.out.println(ic.count("leetcode", "problemTitle"));
+		System.out.println(ic.count("leetcode", "problem"));
 	}
 
 }

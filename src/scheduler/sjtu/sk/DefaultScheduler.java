@@ -15,6 +15,7 @@ import outputer.sjtu.sk.Outputer;
 import parser.sjtu.sk.DataExtractor;
 import parser.sjtu.sk.HtmlParser;
 import parser.sjtu.sk.ImageExtractor;
+import parser.sjtu.sk.LeetcodeProblemExtractor;
 import parser.sjtu.sk.LeetcodeProblemTitleExtractor;
 import storage.sjtu.sk.DataWriter;
 import url.manager.sjtu.sk.URL;
@@ -216,15 +217,15 @@ public class DefaultScheduler implements Runnable {
 		// config parameters
 		Map<String, Object> paras = new HashMap<String, Object>();
 		//paras.put("OutPuter", new HtmlTableOutputer());
-		paras.put("dataExtractor", new LeetcodeProblemTitleExtractor());
+		paras.put("dataExtractor", new LeetcodeProblemExtractor());
 		paras.put("num_threads", 10);
 		paras.put("isThreadPool", false);
-		paras.put("maxNum", 10);
+		paras.put("maxNum", 30);
 		paras.put("persistent_style", PersistentStyle.ES);
 		ds.config(paras);
 		
 		// run tasks
-		ds.runTask(Arrays.asList(seed), "leetcode-problemTitle", "dto.user.LeetCodeTitleDTO");
+		ds.runTask(Arrays.asList(seed), "leetcode-problem", "dto.user.LeetCodeProblemDTO");
 		
 		/*
 		//demo 2: crawl images
