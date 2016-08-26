@@ -4,6 +4,7 @@ import java.util.*;
 
 import logging.sjtu.sk.Logging;
 import parser.sjtu.sk.LeetcodeProblemExtractor;
+import parser.sjtu.sk.LeetcodeProblemTitleExtractor;
 import url.manager.sjtu.sk.URL;
 import util.sjtu.sk.PersistentStyle;
 
@@ -71,7 +72,7 @@ public class MultiTaskSecheduler implements Runnable {
 		// configure parameters
 		Map<String, Object> paras1 = new HashMap<String, Object>();
 		paras1.put("dataExtractor", new LeetcodeProblemExtractor());
-		paras1.put("num_threads", 6);
+		paras1.put("num_threads", 5);
 		paras1.put("isThreadPool", false);
 		paras1.put("maxNum", 30);
 		paras1.put("persistent_style", PersistentStyle.ES);
@@ -79,8 +80,8 @@ public class MultiTaskSecheduler implements Runnable {
 		paras1.put("dto", "dto.user.LeetCodeProblemDTO");
 		
 		Map<String, Object> paras2 = new HashMap<String, Object>();
-		paras2.put("dataExtractor", new LeetcodeProblemExtractor());
-		paras2.put("num_threads", 6);
+		paras2.put("dataExtractor", new LeetcodeProblemTitleExtractor());
+		paras2.put("num_threads", 5);
 		paras2.put("isThreadPool", false);
 		paras2.put("maxNum", 30);
 		paras2.put("persistent_style", PersistentStyle.ES);
