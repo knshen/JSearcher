@@ -22,12 +22,12 @@ public class Logging {
 	public static void log(String str) {
 		Date now = new Date(); 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		try {
-			bw.write(dateFormat.format(now) + "\n" + str + "\n");
-			bw.flush();
-		} catch(IOException ioe) {
-			ioe.printStackTrace();
-		}
+		//try {
+			//bw.write(dateFormat.format(now) + "\n" + str + "\n");
+			//bw.flush();
+		//} catch(IOException ioe) {
+		//	ioe.printStackTrace();
+		//}
 		
 		System.out.println(dateFormat.format(now) + "\n" + str); 	
 	}
