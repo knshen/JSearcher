@@ -25,6 +25,11 @@ public class Sender {
 	private Destination destination = null;
 	private MessageProducer producer = null;
 	
+	/**
+	 * 
+	 * @param queue_name : name of destination message queue
+	 * @param host_name : destination ip/host name
+	 */
 	public Sender(String queue_name, String host_name) {
 		this.queue_name = queue_name;
 		
@@ -48,6 +53,10 @@ public class Sender {
 
 	}
 	
+	/**
+	 * send messages one by one
+	 * @param msgs
+	 */
 	public void sendMsg(List<String> msgs) {
 		try {
 	        for(String msg : msgs) {

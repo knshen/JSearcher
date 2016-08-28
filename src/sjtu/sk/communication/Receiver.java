@@ -13,7 +13,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 import sjtu.sk.logging.Logging;
 
-public class Receiver implements Runnable {
+public abstract class Receiver implements Runnable {
 	public static final int interval = 1000;
 	
     private ConnectionFactory connectionFactory = null;
@@ -22,7 +22,7 @@ public class Receiver implements Runnable {
     private Destination destination = null;
     private MessageConsumer consumer = null;
     
-    private String queue_name;
+    private String queue_name; // local message queue name
     
 	public Receiver(String queue_name) {
 		this.queue_name = queue_name;
@@ -44,13 +44,16 @@ public class Receiver implements Runnable {
 		}
 	}
 	
-	public void afterRecvMsg(String msg) {
-		
-	}
+	/**
+	 * business logic after getting messages
+	 * @param msg
+	 */
+	public abstract void afterRecvMsg(String msg); 
 	
 	public void run() {
 		try {
 			while(true) {
+				// check message queue every interval (1s)
 	            TextMessage message = (TextMessage) consumer.receive(interval);
 	            if (null != message) {
 	                String msg = message.getText();
@@ -74,8 +77,5 @@ public class Receiver implements Runnable {
 
 	}
 	
-    public static void main(String[] args) {
-    	Thread listener = new Thread(new Receiver("FirstQueue"));
-    	listener.start();
-    }
+    
 }
