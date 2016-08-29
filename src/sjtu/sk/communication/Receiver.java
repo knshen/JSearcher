@@ -14,7 +14,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import sjtu.sk.logging.Logging;
 
 public abstract class Receiver implements Runnable {
-	public static final int interval = 1000;
+	public static final int interval = 500;
 	
     private ConnectionFactory connectionFactory = null;
     private Connection connection = null;
@@ -23,7 +23,7 @@ public abstract class Receiver implements Runnable {
     private MessageConsumer consumer = null;
     
     private String queue_name; // local message queue name
-    
+      
 	public Receiver(String queue_name) {
 		this.queue_name = queue_name;
 		
@@ -53,15 +53,14 @@ public abstract class Receiver implements Runnable {
 	public void run() {
 		try {
 			while(true) {
-				// check message queue every interval (1s)
+				// check message queue every interval
 	            TextMessage message = (TextMessage) consumer.receive(interval);
 	            if (null != message) {
 	                String msg = message.getText();
-	                Logging.log("receive msg: " + msg + "\n");
+	                //Logging.log("receive msg: " + msg + "\n");
 	                afterRecvMsg(msg);
 	            } 
-	            else 
-	                break;
+	       
 			}
           
 		} catch(JMSException je) {

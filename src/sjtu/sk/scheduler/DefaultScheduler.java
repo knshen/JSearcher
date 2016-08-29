@@ -1,5 +1,6 @@
 package sjtu.sk.scheduler;
 
+import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,6 +9,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.jsoup.nodes.Document;
 
+import sjtu.sk.communication.Sender;
+import sjtu.sk.communication.URLReceiver;
 import sjtu.sk.downloader.HtmlDownloader;
 import sjtu.sk.logging.Logging;
 import sjtu.sk.outputer.HtmlTableOutputer;
@@ -23,6 +26,7 @@ import sjtu.sk.url.manager.URLManager;
 import sjtu.sk.util.OperatingSystem;
 import sjtu.sk.util.PersistentStyle;
 import sjtu.sk.util.Util;
+import sjtu.sk.util.XMLReader;
 import sjtu.sk.balance.ConsistentHash;
 import sjtu.sk.balance.HashFunction;
 import sjtu.sk.balance.Node;
@@ -35,6 +39,8 @@ import sjtu.sk.balance.Node;
  *
  */
 public class DefaultScheduler implements Runnable {
+	public static final int numVirtualNodes = 3; // Virtual Node in ConsistentHash
+	
 	private HtmlDownloader hd = null;
 	private HtmlParser hp = null;
 	private URLManager um = null;
@@ -52,10 +58,20 @@ public class DefaultScheduler implements Runnable {
 	private String task_name = "";
 	private String dto = "";
 
-	private ConsistentHash ch = null; // load balancer
+	private ConsistentHash<Node> ch = null; // load balancer
+	private List<Node> cluster = null; // cluster (physical nodes)
 	
 	public static DefaultScheduler createDefaultScheduler() {
 		return new DefaultScheduler();
+	}
+	
+	/**
+	 * another way (by XML) to configure parameters of the Spider 
+	 * @param configFilePath
+	 */
+	public final void config(String configFilePath) {
+		Map<String, Object> paras = XMLReader.readSchedulerConfig(configFilePath);
+		config(paras);
 	}
 	
 	/**
@@ -67,7 +83,7 @@ public class DefaultScheduler implements Runnable {
 	 * @param maxNum
 	 */
 	public final void config(Map<String, Object> paras) {
-		// config parameters
+		// config other parameters
 		if(paras == null)
 			return;
 		for(Map.Entry<String, Object> para : paras.entrySet()) {
@@ -96,7 +112,11 @@ public class DefaultScheduler implements Runnable {
 		um = new URLManager();
 		hd = new HtmlDownloader();
 		hp = new HtmlParser();
-		//ch = new ConsistentHash<Node>(new HashFunction(), 3, nodes);
+		cluster = new ArrayList<Node>();
+		
+		// init cluster info
+		cluster = XMLReader.readClusterConfig("cluster.xml");
+		ch = new ConsistentHash<Node>(new HashFunction(), numVirtualNodes, cluster);
 	}
 	
 	/**
@@ -115,6 +135,12 @@ public class DefaultScheduler implements Runnable {
 			// non thread pool mode
 			//step 1: finish crawl tasks
 			this.um.addURLList(seed);
+			
+			// worders: crawler threads
+			// receiver: url receiver thread
+			Thread receiver = new Thread(new URLReceiver("URLQueue", um));
+			receiver.start();
+			
 			List<Thread> workers = new ArrayList<Thread>();
 			for(int i=0; i<num_threads; i++) {
 				workers.add(new Thread(this));
@@ -204,10 +230,26 @@ public class DefaultScheduler implements Runnable {
 			List<Object> data = de.extract(hp.getDocument());  // extract data from current page
 			lock.lock();
 			try {
+				// add data
 				if(data != null && data.size() > 0) 
 					total_data.addAll(data); 
 				
-				um.addURLList(new_links);
+				// deal with new URLs
+				String local_ip = Util.getLocalIP();
+				for(URL url : new_links) {
+					Node loc = ch.get(url.getURLValue()); // at where should the url be visited
+					//if(loc.getNode_id().equals("node-1")) {
+					if(loc.getIp().equals(local_ip)) {
+						um.addOneURL(url); // add locally
+					}
+					else {
+						Sender sender = new Sender("URLQueue", loc.getIp());
+						sender.sendMsg(Arrays.asList(url.getURLValue()));
+						sender.close();
+					}
+				} 
+				
+				//um.addURLList(new_links);
 			} 
 			finally {
 				lock.unlock();
@@ -216,5 +258,8 @@ public class DefaultScheduler implements Runnable {
 		
 	}
 	
+	public static void main(String args[]) throws Exception {
+		System.out.println(InetAddress.getLocalHost().getHostAddress());
+	}
 
 }

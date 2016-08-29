@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scheduler>
+	<num_threads>10</num_threads>
+	<isthreadpool>false</isthreadpool>
+	<maxnum>30</maxnum>
+	<task_name>leetcode-problem</task_name>
+	<dto>dto.user.LeetCodeProblemDTO</dto>
+</scheduler>

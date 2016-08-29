@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cluster>
+  <node>
+	<name>node-1</name>
+	<ip>192.168.1.150</ip>
+  </node>
+
+  <node>
+	<name>node-2</name>
+	<ip>192.168.1.150</ip>
+  </node>
+</cluster>

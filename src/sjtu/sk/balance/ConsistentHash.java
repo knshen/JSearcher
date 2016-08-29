@@ -67,8 +67,8 @@ public class ConsistentHash<T> {
 	public static void main(String args[]) {
 		List<Node> nodes = new ArrayList<Node>();
 		nodes.add(new Node("A", "192.168.0.1"));
-		nodes.add(new Node("B", "192.168.0.2"));
-		nodes.add(new Node("C", "192.168.0.3"));
+		//nodes.add(new Node("B", "192.168.0.2"));
+		//nodes.add(new Node("C", "192.168.0.3"));
 		
 		ConsistentHash<Node> ch = new ConsistentHash<Node>(new HashFunction(), 3, nodes);
 		

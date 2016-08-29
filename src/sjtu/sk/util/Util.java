@@ -3,6 +3,8 @@ package sjtu.sk.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -13,6 +15,15 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class Util {
+	public static String getLocalIP() {
+		try {
+			return InetAddress.getLocalHost().getHostAddress();
+		} catch(UnknownHostException uhe) {
+			uhe.printStackTrace();
+			return null;
+		}
+	}
+	
 	public static boolean isURLLegal(String url) {
 		if(url == null)
 			return false;

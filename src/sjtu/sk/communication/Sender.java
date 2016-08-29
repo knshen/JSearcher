@@ -63,7 +63,7 @@ public class Sender {
 	            TextMessage message = session
 	                    .createTextMessage(msg);
 	            
-	            Logging.log("send msg: " + msg + "\n");
+	            //Logging.log("Thread: " + Thread.currentThread() + "  send msg: " + msg + "\n");
 	            producer.send(message);
 	        } // end for
 			session.commit();
@@ -83,7 +83,7 @@ public class Sender {
 	}
 	
     public static void main(String[] args) {
-    	Sender sender = new Sender("FirstQueue", "127.0.0.1");
+    	Sender sender = new Sender("FirstQueue", "192.168.1.150");
     	List<String> msgs = new ArrayList<String>();
     	msgs.add("cat");
     	msgs.add("mouse");
