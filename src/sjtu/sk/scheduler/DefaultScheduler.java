@@ -23,6 +23,9 @@ import sjtu.sk.url.manager.URLManager;
 import sjtu.sk.util.OperatingSystem;
 import sjtu.sk.util.PersistentStyle;
 import sjtu.sk.util.Util;
+import sjtu.sk.balance.ConsistentHash;
+import sjtu.sk.balance.HashFunction;
+import sjtu.sk.balance.Node;
 
 /**
  * Default scheduler of the Spider
@@ -48,6 +51,8 @@ public class DefaultScheduler implements Runnable {
 	
 	private String task_name = "";
 	private String dto = "";
+
+	private ConsistentHash ch = null; // load balancer
 	
 	public static DefaultScheduler createDefaultScheduler() {
 		return new DefaultScheduler();
@@ -87,9 +92,11 @@ public class DefaultScheduler implements Runnable {
 	}
 	
 	private DefaultScheduler() {
+		// initialization
 		um = new URLManager();
 		hd = new HtmlDownloader();
 		hp = new HtmlParser();
+		//ch = new ConsistentHash<Node>(new HashFunction(), 3, nodes);
 	}
 	
 	/**
@@ -146,6 +153,7 @@ public class DefaultScheduler implements Runnable {
 	}
 	
 	public void run() {
+		//Sender sender = new 
 		crawl();
 	}
 	
@@ -170,7 +178,7 @@ public class DefaultScheduler implements Runnable {
 			// no url to visit (url queue is empty!)
 			if(new_url == null) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(1000); // wait 1s
 				} catch(InterruptedException ie) {
 					ie.printStackTrace();
 				}
@@ -192,12 +200,12 @@ public class DefaultScheduler implements Runnable {
 			
 			Logging.log(Thread.currentThread().getName() + " visiting: " + new_url.getURLValue());
 		
-			List<URL> new_links = hp.parse(html, new_url.getURLValue());
-			List<Object> data = de.extract(hp.getDocument()); 
+			List<URL> new_links = hp.parse(html, new_url.getURLValue()); // get new URLs 
+			List<Object> data = de.extract(hp.getDocument());  // extract data from current page
 			lock.lock();
 			try {
 				if(data != null && data.size() > 0) 
-					total_data.addAll(data);
+					total_data.addAll(data); 
 				
 				um.addURLList(new_links);
 			} 
@@ -208,38 +216,5 @@ public class DefaultScheduler implements Runnable {
 		
 	}
 	
-	/**
-	 * this is the entrance of demo test
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		
-		//demo 1: crawl leetcode problem title
-		URL seed = new URL("https://leetcode.com/problemset/algorithms/");
-		//create scheduler instance
-		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
-		// config parameters
-		Map<String, Object> paras = new HashMap<String, Object>();
-		//paras.put("OutPuter", new HtmlTableOutputer());
-		paras.put("dataExtractor", new LeetcodeProblemExtractor());
-		paras.put("num_threads", 10);
-		paras.put("isThreadPool", false);
-		paras.put("maxNum", 30);
-		paras.put("persistent_style", PersistentStyle.ES);
-		paras.put("task_name", "leetcode-problem");
-		paras.put("dto", "dto.user.LeetCodeProblemDTO");
-		ds.config(paras);
-		
-		// run tasks
-		ds.runTask(Arrays.asList(seed));
-		
-		/*
-		//demo 2: crawl images
-		URL seed = new URL("http://ent.qq.com/star/");
-		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
-		ds.config(null, new ImageExtractor(), 3, false, 10);
-		ds.runTask(Arrays.asList(seed), "qqStarPic", "dto.user.Picture");
-		*/
-	}			
 
 }
