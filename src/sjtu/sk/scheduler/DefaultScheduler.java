@@ -23,6 +23,7 @@ import sjtu.sk.parser.LeetcodeProblemTitleExtractor;
 import sjtu.sk.storage.DataWriter;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.url.manager.URLManager;
+import sjtu.sk.util.BloomFilter;
 import sjtu.sk.util.OperatingSystem;
 import sjtu.sk.util.PersistentStyle;
 import sjtu.sk.util.Util;
@@ -47,12 +48,12 @@ public class DefaultScheduler implements Runnable {
 	private Outputer out = null;
 	private DataExtractor de = null;
 	
-	private List<Object> total_data = new ArrayList<Object>(); // global crawed data 
+	private List<Object> total_data = new ArrayList<Object>(); // global crawled data 
 	private int num_threads; // number of threads
 	private boolean isThreadPool = false;
 	private int count = 0; // number of pages have visited
 	private final Lock lock = new ReentrantLock(); 
-	private int maxNum = 0; // max number of pages allowed
+	private int maxNum = 0; // max number of pages to visist
 	private int persistent_style = PersistentStyle.ES; // save data to MongoDB or ElasticSearch?
 	
 	private String task_name = "";
@@ -60,6 +61,8 @@ public class DefaultScheduler implements Runnable {
 
 	private ConsistentHash<Node> ch = null; // load balancer
 	private List<Node> cluster = null; // cluster (physical nodes)
+	
+	private BloomFilter<URL> already_sent = null;
 	
 	public static DefaultScheduler createDefaultScheduler() {
 		return new DefaultScheduler();
@@ -113,6 +116,7 @@ public class DefaultScheduler implements Runnable {
 		hd = new HtmlDownloader();
 		hp = new HtmlParser();
 		cluster = new ArrayList<Node>();
+		already_sent = new BloomFilter<URL>(2<<24);
 		
 		// init cluster info
 		cluster = XMLReader.readClusterConfig("cluster.xml");
@@ -155,14 +159,14 @@ public class DefaultScheduler implements Runnable {
 					ie.printStackTrace();
 				}
 			}
-			
+						
 			//step 2: persist crawled data and visited urls to DB (TODO buffered persistent)
 			if(this.persistent_style == PersistentStyle.DB)
 				DataWriter.writeData2DB(total_data, task_name, dto);
 			else
 				DataWriter.writeData2ES(total_data, task_name, dto); 
 			//um.flushVisitedURL2DB();
-			
+					
 			//step 3: output to a file (optional) 
 			if(out != null) {
 				// output html file
@@ -176,10 +180,11 @@ public class DefaultScheduler implements Runnable {
 			}
 				
 		}
+		
+		Logging.log("finished the task!\n");
 	}
 	
 	public void run() {
-		//Sender sender = new 
 		crawl();
 	}
 	
@@ -188,9 +193,6 @@ public class DefaultScheduler implements Runnable {
 	 */
 	private void crawl() {
 		while(true) {
-			if(count >= maxNum)
-				break;
-			
 			URL new_url = null;
 			// fetch a URL from toVisit list
 			lock.lock();	
@@ -211,14 +213,17 @@ public class DefaultScheduler implements Runnable {
 				
 				continue;
 			}
-				
+			
+			if(count >= maxNum)
+				break;
+			
 			String html = hd.download(new_url);			
 			if(html == null) 
 				continue;
 			
 			lock.lock();
 			try {
-				count++;
+				count = Util.increaseOne(count, maxNum);
 			}
 			finally {
 				lock.unlock();
@@ -228,14 +233,18 @@ public class DefaultScheduler implements Runnable {
 		
 			List<URL> new_links = hp.parse(html, new_url.getURLValue()); // get new URLs 
 			List<Object> data = de.extract(hp.getDocument());  // extract data from current page
+			
 			lock.lock();
 			try {
 				// add data
 				if(data != null && data.size() > 0) 
 					total_data.addAll(data); 
 				
+				if(count >= maxNum)
+					break;
+				
 				// deal with new URLs
-				String local_ip = Util.getLocalIP();
+				String local_ip = Util.getLocalIP();	
 				for(URL url : new_links) {
 					Node loc = ch.get(url.getURLValue()); // at where should the url be visited
 					//if(loc.getNode_id().equals("node-1")) {
@@ -243,19 +252,20 @@ public class DefaultScheduler implements Runnable {
 						um.addOneURL(url); // add locally
 					}
 					else {
-						Sender sender = new Sender("URLQueue", loc.getIp());
-						sender.sendMsg(Arrays.asList(url.getURLValue()));
-						sender.close();
+						if(!already_sent.contains(url)) {
+							// send this URL to a remote node
+							already_sent.addElement(url);
+							Sender sender = new Sender("URLQueue", loc.getIp());
+							sender.sendMsg(Arrays.asList(url.getURLValue()));
+							sender.close();
+						}	
 					}
 				} 
-				
-				//um.addURLList(new_links);
 			} 
 			finally {
 				lock.unlock();
 			}
 		} // end while
-		
 	}
 	
 	public static void main(String args[]) throws Exception {

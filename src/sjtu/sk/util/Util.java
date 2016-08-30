@@ -15,6 +15,13 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class Util {
+	
+	public static int increaseOne(int num, int val) {
+		if(num >= val) 
+			return num;
+		return ++num;
+	}
+	
 	public static String getLocalIP() {
 		try {
 			return InetAddress.getLocalHost().getHostAddress();
