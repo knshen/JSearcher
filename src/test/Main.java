@@ -26,7 +26,7 @@ public class Main {
 		paras.put("dataExtractor", new LeetcodeProblemExtractor());
 		paras.put("num_threads", 5);
 		paras.put("isThreadPool", false);
-		paras.put("maxNum", 30);
+		paras.put("maxNum", 50);
 		paras.put("persistent_style", PersistentStyle.ES);
 		paras.put("task_name", "leetcode-problem");
 		paras.put("dto", "dto.user.LeetCodeProblemDTO");
