@@ -21,6 +21,7 @@ import sjtu.sk.parser.ImageExtractor;
 import sjtu.sk.parser.LeetcodeProblemExtractor;
 import sjtu.sk.storage.DataWriter;
 import sjtu.sk.url.manager.URL;
+import sjtu.sk.url.manager.URLComparator;
 import sjtu.sk.url.manager.URLManager;
 import sjtu.sk.util.BloomFilter;
 import sjtu.sk.util.OperatingSystem;
@@ -105,11 +106,11 @@ public class DefaultScheduler implements Runnable {
 				this.task_name = para.getValue().toString();
 			if(key.equals("dto"))
 				this.dto = para.getValue().toString();
-			if(key.equals("filter")) {
+			if(key.equals("filter")) 
 				um.setFilter((URLFilter)(para.getValue()));
-			}
-				
-				
+			if(key.equals("comparator")) 
+				um.setURLComparator((URLComparator<URL>)(para.getValue()));
+		
 		}
 	}
 	

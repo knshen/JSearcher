@@ -7,6 +7,7 @@ import java.util.Map;
 import sjtu.sk.filter.LeetcodeURLFilter;
 import sjtu.sk.parser.LeetcodeProblemExtractor;
 import sjtu.sk.scheduler.DefaultScheduler;
+import sjtu.sk.url.manager.LeetcodeURLComparator;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.PersistentStyle;
 
@@ -33,17 +34,20 @@ public class Main {
 		 * (7) dto
 		 * (8) filter(*)
 		 * (9) outputer(*)
+		 * (10)comparator(*)
  		 */
 		Map<String, Object> paras = new HashMap<String, Object>();
 		
 		paras.put("dataExtractor", new LeetcodeProblemExtractor());
-		paras.put("num_threads", 5);
+		paras.put("num_threads", 10);
 		paras.put("isThreadPool", false);
-		paras.put("maxNum", 30);
+		paras.put("maxNum", 1000);
 		paras.put("persistent_style", PersistentStyle.ES);
 		paras.put("task_name", "leetcode-problem");
 		paras.put("dto", "dto.user.LeetcodeProblemDTO");
+		paras.put("comparator", new LeetcodeURLComparator());
 		//paras.put("filter", new LeetcodeURLFilter());
+		//paras.put("outputer", null);
 		ds.config(paras);
 		
 		// run tasks

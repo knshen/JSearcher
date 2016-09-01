@@ -16,7 +16,6 @@ import sjtu.sk.util.BloomFilter;
  *
  */
 public class URLManager {
-	public static final int MAX_SIZE_VISITED = 10000;
 	// "to visit" urls queue (in memory)
 	volatile private Queue<URL> urls = new LinkedList<URL>();
 	//volatile private Set<URL> visited = new HashSet<URL>();
@@ -25,9 +24,15 @@ public class URLManager {
 	// must ensure the URL in the list is distinct
 	//volatile private List<URL> visited = new ArrayList<URL>();
 	private URLFilter filter = null;
+	private URLComparator<URL> com = null;
 	
 	public void setFilter(URLFilter filter) {
 		this.filter = filter;
+	}
+	
+	public void setURLComparator(URLComparator<URL> com) {
+		this.com = com;
+		urls = new PriorityQueue<URL>(com);
 	}
 	
 	public boolean isVisited(URL url) {
@@ -77,18 +82,14 @@ public class URLManager {
 	public static void main(String args[]) {
 		// unit test
 		URLManager um = new URLManager();
-		for(int i=0; i<3; i++) {
-			String url = "abcd";
-			um.addOneURL(new URL(url));
-		}
-		for(int i=0; i<2; i++) {
-			String url = "abcx";
-			um.addOneURL(new URL(url));
-		}
-		System.out.println();
-		URL a = null;
-		a = um.fetchOneURL();
-		a = um.fetchOneURL();
+		um.setURLComparator(new LeetcodeURLComparator());
+		um.addOneURL(new URL("https://leetcode.com/problemset/algorithms/"));
+		um.addOneURL(new URL("https://leetcode.com/contest/"));
+		um.addOneURL(new URL("https://leetcode.com/problems/find-the-difference/"));
+		um.addOneURL(new URL("https://leetcode.com/problems/super-pow/"));
+		
+		for(int i=0; i<4; i++)
+			System.out.println(um.fetchOneURL().print());
 	}
 	
 }
