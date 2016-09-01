@@ -199,10 +199,10 @@ public class IndexController {
 	public static void main(String[] args) {
 		IndexController ic = IndexController
 				.createIndexControllerInstance("localhost");
-		//ic.searchAll("leetcode", "problem", "dto.user.LeetCodeProblemDTO");	
-		ic.delete("leetcode", "problem");
+		ic.searchAll("leetcode", "problem", "dto.user.LeetcodeProblemDTO");	
+		//ic.delete("leetcode", "problem");
 		
-		System.out.println(ic.count("leetcode", "problem"));
+		//System.out.println(ic.count("leetcode", "problem"));
 	}
 
 }

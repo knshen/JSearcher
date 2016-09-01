@@ -39,7 +39,7 @@ public class Main {
 		Map<String, Object> paras = new HashMap<String, Object>();
 		
 		paras.put("dataExtractor", new LeetcodeProblemExtractor());
-		paras.put("num_threads", 10);
+		paras.put("num_threads", 20);
 		paras.put("isThreadPool", false);
 		paras.put("maxNum", 1000);
 		paras.put("persistent_style", PersistentStyle.ES);

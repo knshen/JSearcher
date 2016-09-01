@@ -7,18 +7,16 @@ public class LeetcodeProblemDTO {
 	private long submission;
 	private String difficulty;
 	private String content;
-	private double acceptRatio;
-	
-	public double getAcceptRatio() {
-		return acceptRatio;
-	}
-
-	public void setAcceptRatio() {
-		
-	}
-
+	private double acRatio;
 	private String url;
 	
+	public double getAcRatio() {
+		return acRatio;
+	}
+
+	public void setAcRatio(double acRatio) {
+	}
+
 	public String getUrl() {
 		return url;
 	}
@@ -50,7 +48,7 @@ public class LeetcodeProblemDTO {
 	public void setAccept(long accept) {
 		this.accept = accept;
 		if(accept != 0 && submission !=0)
-			this.acceptRatio = accept / (double)submission;
+			this.acRatio = accept / (double)submission;
 	}
 
 	public long getSubmission() {
@@ -60,7 +58,7 @@ public class LeetcodeProblemDTO {
 	public void setSubmission(long submission) {
 		this.submission = submission;
 		if(accept != 0 && submission !=0)
-			this.acceptRatio = accept / (double)submission;
+			this.acRatio = accept / (double)submission;
 	}
 	
 	public String getDifficulty() {
@@ -85,7 +83,7 @@ public class LeetcodeProblemDTO {
 	
 	public String toString() {
 		return id + ", " + title + ", " + accept + ", " + submission + 
-				", " + acceptRatio + ", " + difficulty + ", " + content;
+				", " + acRatio + ", " + difficulty + ", " + content;
 	}
 
 }
