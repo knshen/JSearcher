@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import sjtu.sk.filter.LeetcodeURLFilter;
 import sjtu.sk.parser.LeetcodeProblemExtractor;
 import sjtu.sk.scheduler.DefaultScheduler;
 import sjtu.sk.url.manager.URL;
@@ -21,15 +22,28 @@ public class Main {
 		//create scheduler instance
 		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
 		// config parameters
+		/**
+		 * parameters:
+		 * (1) dataextractor
+		 * (2) num_threads
+		 * (3) isthreadpool
+		 * (4) maxnum
+		 * (5) persistent_style
+		 * (6) task_name
+		 * (7) dto
+		 * (8) filter(*)
+		 * (9) outputer(*)
+ 		 */
 		Map<String, Object> paras = new HashMap<String, Object>();
-		//paras.put("OutPuter", new HtmlTableOutputer());
+		
 		paras.put("dataExtractor", new LeetcodeProblemExtractor());
 		paras.put("num_threads", 5);
 		paras.put("isThreadPool", false);
-		paras.put("maxNum", 50);
+		paras.put("maxNum", 30);
 		paras.put("persistent_style", PersistentStyle.ES);
 		paras.put("task_name", "leetcode-problem");
-		paras.put("dto", "dto.user.LeetCodeProblemDTO");
+		paras.put("dto", "dto.user.LeetcodeProblemDTO");
+		//paras.put("filter", new LeetcodeURLFilter());
 		ds.config(paras);
 		
 		// run tasks

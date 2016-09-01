@@ -12,14 +12,13 @@ import org.jsoup.nodes.Document;
 import sjtu.sk.communication.Sender;
 import sjtu.sk.communication.URLReceiver;
 import sjtu.sk.downloader.HtmlDownloader;
+import sjtu.sk.filter.URLFilter;
 import sjtu.sk.logging.Logging;
-import sjtu.sk.outputer.HtmlTableOutputer;
 import sjtu.sk.outputer.Outputer;
 import sjtu.sk.parser.DataExtractor;
 import sjtu.sk.parser.HtmlParser;
 import sjtu.sk.parser.ImageExtractor;
 import sjtu.sk.parser.LeetcodeProblemExtractor;
-import sjtu.sk.parser.LeetcodeProblemTitleExtractor;
 import sjtu.sk.storage.DataWriter;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.url.manager.URLManager;
@@ -55,7 +54,6 @@ public class DefaultScheduler implements Runnable {
 	private final Lock lock = new ReentrantLock(); 
 	private int maxNum = 0; // max number of pages to visist
 	private int persistent_style = PersistentStyle.ES; // save data to MongoDB or ElasticSearch?
-	
 	private String task_name = "";
 	private String dto = "";
 
@@ -107,6 +105,11 @@ public class DefaultScheduler implements Runnable {
 				this.task_name = para.getValue().toString();
 			if(key.equals("dto"))
 				this.dto = para.getValue().toString();
+			if(key.equals("filter")) {
+				um.setFilter((URLFilter)(para.getValue()));
+			}
+				
+				
 		}
 	}
 	
@@ -232,7 +235,7 @@ public class DefaultScheduler implements Runnable {
 			Logging.log(Thread.currentThread().getName() + " visiting: " + new_url.getURLValue());
 		
 			List<URL> new_links = hp.parse(html, new_url.getURLValue()); // get new URLs 
-			List<Object> data = de.extract(hp.getDocument());  // extract data from current page
+			List<Object> data = de.extract(hp.getDocument(), new_url.getURLValue());  // extract data from current page
 			
 			lock.lock();
 			try {

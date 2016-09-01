@@ -5,6 +5,6 @@ import java.util.*;
 
 public abstract class DataExtractor {
 	
-	public abstract List<Object> extract(Document doc);
+	public abstract List<Object> extract(Document doc, String url);
 	
 }

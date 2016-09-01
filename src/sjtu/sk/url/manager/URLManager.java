@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import sjtu.sk.filter.LeetcodeURLFilter;
+import sjtu.sk.filter.URLFilter;
 import sjtu.sk.storage.DataWriter;
 import sjtu.sk.util.BloomFilter;
 
@@ -22,7 +24,12 @@ public class URLManager {
 	volatile private BloomFilter<URL> bf_visited = new BloomFilter<URL>(2<<24);
 	// must ensure the URL in the list is distinct
 	//volatile private List<URL> visited = new ArrayList<URL>();
-			
+	private URLFilter filter = null;
+	
+	public void setFilter(URLFilter filter) {
+		this.filter = filter;
+	}
+	
 	public boolean isVisited(URL url) {
 		return bf_visited.contains(url);
 	}
@@ -39,9 +46,11 @@ public class URLManager {
 	
 	public boolean addOneURL(URL new_url) {
 		if(!isVisited(new_url)) {
-			urls.offer(new_url);
-			bf_visited.addElement(new_url);
-			return true;
+			if(filter == null || filter.shouldVisit(new_url)) {
+				urls.offer(new_url);
+				bf_visited.addElement(new_url);
+				return true;
+			}
 		}
 		return false;
 	}

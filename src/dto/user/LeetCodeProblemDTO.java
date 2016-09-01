@@ -9,6 +9,24 @@ public class LeetcodeProblemDTO {
 	private String content;
 	private double acceptRatio;
 	
+	public double getAcceptRatio() {
+		return acceptRatio;
+	}
+
+	public void setAcceptRatio() {
+		
+	}
+
+	private String url;
+	
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -65,5 +83,9 @@ public class LeetcodeProblemDTO {
 		
 	}
 	
+	public String toString() {
+		return id + ", " + title + ", " + accept + ", " + submission + 
+				", " + acceptRatio + ", " + difficulty + ", " + content;
+	}
 
 }

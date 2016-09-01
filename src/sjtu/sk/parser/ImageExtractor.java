@@ -16,7 +16,7 @@ import sjtu.sk.util.OperatingSystem;
 import sjtu.sk.util.Util;
 
 public class ImageExtractor extends DataExtractor {
-	public List<Object> extract(Document doc) {
+	public List<Object> extract(Document doc, String url) {
 		List<Object> res = new ArrayList<Object>();
 		
 		Elements images = doc.select("img[src]");
@@ -80,8 +80,10 @@ public class ImageExtractor extends DataExtractor {
 	
 	public static void main(String[] args) throws IOException {
 		DataExtractor de = new ImageExtractor();
-		Document doc = Jsoup.connect("http://sports.qq.com/nba/").get();
-		de.extract(doc);
+		
+		String url = "http://sports.qq.com/nba/";
+		Document doc = Jsoup.connect(url).get();
+		de.extract(doc, url);
 	}
 
 }
