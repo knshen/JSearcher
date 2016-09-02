@@ -26,10 +26,11 @@ public class DataWriter {
 		String index = task_name.split("-")[0];
 		String type = task_name.split("-")[1];
 		
+		/*
 		if(ec.isIndexExist(index) && ec.isTypeExist(index, type) && ec.count(index, type) > 0) {
 			Logging.log("delete before insert!\n");
 			ec.delete(index, type);
-		}
+		}*/
 		
 		ec.insert(data, index, type, dto);
 	}

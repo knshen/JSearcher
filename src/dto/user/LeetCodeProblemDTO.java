@@ -15,6 +15,7 @@ public class LeetcodeProblemDTO {
 	}
 
 	public void setAcRatio(double acRatio) {
+		this.acRatio = acRatio;
 	}
 
 	public String getUrl() {

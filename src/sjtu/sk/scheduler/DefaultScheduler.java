@@ -20,6 +20,7 @@ import sjtu.sk.parser.HtmlParser;
 import sjtu.sk.parser.ImageExtractor;
 import sjtu.sk.parser.LeetcodeProblemExtractor;
 import sjtu.sk.storage.DataWriter;
+import sjtu.sk.storage.MemoryDataWriter;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.url.manager.URLComparator;
 import sjtu.sk.url.manager.URLManager;
@@ -41,6 +42,7 @@ import sjtu.sk.balance.Node;
  */
 public class DefaultScheduler implements Runnable {
 	public static final int numVirtualNodes = 3; // Virtual Node in ConsistentHash
+	public static final int politeness = 500;
 	
 	private HtmlDownloader hd = null;
 	private HtmlParser hp = null;
@@ -141,13 +143,17 @@ public class DefaultScheduler implements Runnable {
 		}
 		else {
 			// non thread pool mode
-			//step 1: finish crawl tasks
+			// finish crawl tasks
 			this.um.addURLList(seed);
 			
 			// worders: crawler threads
 			// receiver: url receiver thread
+			// writer: write in-memory data to disk conditionally
 			Thread receiver = new Thread(new URLReceiver("URLQueue", um));
 			receiver.start();
+			
+			Thread writer = new Thread(new MemoryDataWriter(lock, total_data, dto, task_name, persistent_style));
+			writer.start();
 			
 			List<Thread> workers = new ArrayList<Thread>();
 			for(int i=0; i<num_threads; i++) {
@@ -163,15 +169,14 @@ public class DefaultScheduler implements Runnable {
 					ie.printStackTrace();
 				}
 			}
-						
-			//step 2: persist crawled data and visited urls to DB (TODO buffered persistent)
-			if(this.persistent_style == PersistentStyle.DB)
+			
+			// flush remaining data to DB/ES
+			if (this.persistent_style == PersistentStyle.DB)
 				DataWriter.writeData2DB(total_data, task_name, dto);
 			else
-				DataWriter.writeData2ES(total_data, task_name, dto); 
-			//um.flushVisitedURL2DB();
-					
-			//step 3: output to a file (optional) 
+				DataWriter.writeData2ES(total_data, task_name, dto);
+			
+			// output to a file (optional) 
 			if(out != null) {
 				// output html file
 				String path = "";
@@ -269,6 +274,12 @@ public class DefaultScheduler implements Runnable {
 			finally {
 				lock.unlock();
 			}
+			
+			try {
+				Thread.sleep(politeness);
+			} catch(InterruptedException ie) {
+				ie.printStackTrace();
+			}		
 		} // end while
 	}
 	

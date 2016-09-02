@@ -11,13 +11,12 @@ import sjtu.sk.url.manager.LeetcodeURLComparator;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.PersistentStyle;
 
-public class Main {
+public class LeetcodeTest {
 	/**
 	 * this is the entrance of application
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) {		
 		//demo 1: crawl leetcode problem title
 		URL seed = new URL("https://leetcode.com/problemset/algorithms/");
 		//create scheduler instance
@@ -41,9 +40,9 @@ public class Main {
 		paras.put("dataExtractor", new LeetcodeProblemExtractor());
 		paras.put("num_threads", 20);
 		paras.put("isThreadPool", false);
-		paras.put("maxNum", 1000);
+		paras.put("maxNum", 500);
 		paras.put("persistent_style", PersistentStyle.ES);
-		paras.put("task_name", "leetcode-problem");
+		paras.put("task_name", "oj-leetcode");
 		paras.put("dto", "dto.user.LeetcodeProblemDTO");
 		paras.put("comparator", new LeetcodeURLComparator());
 		//paras.put("filter", new LeetcodeURLFilter());
@@ -52,14 +51,6 @@ public class Main {
 		
 		// run tasks
 		ds.runTask(Arrays.asList(seed));
-		
-		/*
-		//demo 2: crawl images
-		URL seed = new URL("http://ent.qq.com/star/");
-		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
-		ds.config(null, new ImageExtractor(), 3, false, 10);
-		ds.runTask(Arrays.asList(seed), "qqStarPic", "dto.user.Picture");
-		*/
 	}			
 
 }
