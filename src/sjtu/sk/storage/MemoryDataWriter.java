@@ -3,20 +3,22 @@ package sjtu.sk.storage;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 
+import sjtu.sk.logging.Logging;
 import sjtu.sk.util.PersistentStyle;
 
 /**
  * MemoryDataWriter is used to periodically flush in-memory data to DB/ES to
  * prevent "out of memory" exception
  * 
+ * every CHECK_PERIOD, it flushes data to DB/ES
  * @author Kai
  *
  */
 public class MemoryDataWriter implements Runnable {
-	// time interval between two check operations
-	public static final int CHECK_PERIOD = 3000; 
+	// time interval between two write operations
+	public static final int CHECK_PERIOD = 10000; 
 	// size threshold to trigger flush operation
-	public static final long SIZE_THRESHOLD = 100; 
+	// public static final long SIZE_THRESHOLD = 100; 
 
 	private List<Object> data = null;
 	private String dto;
@@ -34,25 +36,31 @@ public class MemoryDataWriter implements Runnable {
 	}
 
 	public void run() {
+		
 		while (true) {
-			if (data.size() >= SIZE_THRESHOLD) {
-				lock.lock();	
-				try {
-					if (this.persistent_style == PersistentStyle.DB)
-						DataWriter.writeData2DB(data, task_name, dto);
-					else
-						DataWriter.writeData2ES(data, task_name, dto);
-					data = new ArrayList<Object>();
-				} finally {
-					lock.unlock();
-				}
-			}
-
 			try {
 				Thread.sleep(CHECK_PERIOD);
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
 			}
+			
+			lock.lock();	
+			try {
+				if(data.size() > 0) {
+					Logging.log("before writing, size: " + data.size());
+					if (this.persistent_style == PersistentStyle.DB)
+						DataWriter.writeData2DB(data, task_name, dto);
+					else
+						DataWriter.writeData2ES(data, task_name, dto);
+					data = new ArrayList<Object>();
+				}
+				
+			} finally {
+				lock.unlock();
+			}
+
+
+			
 		}
 	}
 

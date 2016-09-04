@@ -4,8 +4,8 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sjtu.sk.filter.LeetcodeURLFilter;
-import sjtu.sk.filter.URLFilter;
+import sjtu.sk.filter.LeetcodeLinkFilter;
+import sjtu.sk.filter.LinkFilter;
 import sjtu.sk.storage.DataWriter;
 import sjtu.sk.util.BloomFilter;
 
@@ -23,10 +23,10 @@ public class URLManager {
 	volatile private BloomFilter<URL> bf_visited = new BloomFilter<URL>(2<<24);
 	// must ensure the URL in the list is distinct
 	//volatile private List<URL> visited = new ArrayList<URL>();
-	private URLFilter filter = null;
+	private LinkFilter filter = null;
 	private URLComparator<URL> com = null;
 	
-	public void setFilter(URLFilter filter) {
+	public void setFilter(LinkFilter filter) {
 		this.filter = filter;
 	}
 	
@@ -51,7 +51,10 @@ public class URLManager {
 	
 	public boolean addOneURL(URL new_url) {
 		if(!isVisited(new_url)) {
-			if(filter == null || filter.shouldVisit(new_url)) {
+			Link link = null;
+			if(new_url instanceof Link)
+				link = (Link)new_url;
+			if(link == null || filter == null || (link != null && filter.shouldVisit(link))) {
 				urls.offer(new_url);
 				bf_visited.addElement(new_url);
 				return true;

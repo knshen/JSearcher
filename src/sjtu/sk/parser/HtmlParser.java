@@ -11,6 +11,7 @@ import java.util.*;
 
 import sjtu.sk.downloader.HtmlDownloader;
 import sjtu.sk.logging.Logging;
+import sjtu.sk.url.manager.Link;
 import sjtu.sk.url.manager.URL;
 
 /**
@@ -47,9 +48,9 @@ public class HtmlParser {
 					+ link.text() + "\n"
 					+ "-----------------------";
 			//Logging.log(info);
-			URL url = new URL(link.attr("abs:href"));
-			res.add(url);
+			Link lin = new Link(link.attr("abs:href"), link.text().trim());
 			
+			res.add(lin);
 		}
 		return res;
 	}
@@ -58,7 +59,7 @@ public class HtmlParser {
 		HtmlParser hp = new HtmlParser();
 		HtmlDownloader hd = new HtmlDownloader();
 		URL url = new URL("https://leetcode.com/problemset/algorithms/");
-		hp.parse(hd.download(url), url.getURLValue());
+		System.out.println(hp.parse(hd.download(url), url.getURLValue()));
 	}
 
 }

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import sjtu.sk.filter.LeetcodeURLFilter;
+import sjtu.sk.filter.LeetcodeLinkFilter;
 import sjtu.sk.parser.LeetcodeProblemExtractor;
 import sjtu.sk.scheduler.DefaultScheduler;
 import sjtu.sk.url.manager.LeetcodeURLComparator;

@@ -12,7 +12,7 @@ import org.jsoup.nodes.Document;
 import sjtu.sk.communication.Sender;
 import sjtu.sk.communication.URLReceiver;
 import sjtu.sk.downloader.HtmlDownloader;
-import sjtu.sk.filter.URLFilter;
+import sjtu.sk.filter.LinkFilter;
 import sjtu.sk.logging.Logging;
 import sjtu.sk.outputer.Outputer;
 import sjtu.sk.parser.DataExtractor;
@@ -109,7 +109,7 @@ public class DefaultScheduler implements Runnable {
 			if(key.equals("dto"))
 				this.dto = para.getValue().toString();
 			if(key.equals("filter")) 
-				um.setFilter((URLFilter)(para.getValue()));
+				um.setFilter((LinkFilter)(para.getValue()));
 			if(key.equals("comparator")) 
 				um.setURLComparator((URLComparator<URL>)(para.getValue()));
 		
@@ -171,6 +171,7 @@ public class DefaultScheduler implements Runnable {
 			}
 			
 			// flush remaining data to DB/ES
+			Logging.log("before writing, size: " + total_data.size());
 			if (this.persistent_style == PersistentStyle.DB)
 				DataWriter.writeData2DB(total_data, task_name, dto);
 			else

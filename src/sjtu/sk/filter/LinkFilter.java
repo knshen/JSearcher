@@ -2,18 +2,19 @@ package sjtu.sk.filter;
 
 import java.util.List;
 
+import sjtu.sk.url.manager.Link;
 import sjtu.sk.url.manager.URL;
 
-public abstract class URLFilter {
+public abstract class LinkFilter {
 	/**
 	 * check if the URL contains all the key words
 	 * @param url
 	 * @param paras
 	 * @return
 	 */
-	public boolean isContain(URL url, List<String> paras) {
+	public boolean isContain(Link link, List<String> paras) {
 		for(String word : paras) {
-			if(url.getURLValue().indexOf(word) == -1)
+			if(link.getLink_text().indexOf(word) == -1)
 				return false;
 		}
 		return true;
@@ -25,13 +26,13 @@ public abstract class URLFilter {
 	 * @param paras
 	 * @return
 	 */
-	public boolean isNotContain(URL url, List<String> paras) {
+	public boolean isNotContain(Link link, List<String> paras) {
 		for(String word : paras) {
-			if(url.getURLValue().indexOf(word) != -1)
+			if(link.getLink_text().indexOf(word) != -1)
 				return false;
 		}
 		return true;
 	}
 	
-	public abstract boolean shouldVisit(URL url);
+	public abstract boolean shouldVisit(Link link);
 }
