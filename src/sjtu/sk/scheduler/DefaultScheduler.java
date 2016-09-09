@@ -42,7 +42,7 @@ import sjtu.sk.balance.Node;
  */
 public class DefaultScheduler implements Runnable {
 	public static final int numVirtualNodes = 3; // Virtual Node in ConsistentHash
-	public static final int politeness = 500;
+	public static final int politeness = 500; // a thread sleep for a while after a request
 	
 	private HtmlDownloader hd = null;
 	private HtmlParser hp = null;

@@ -44,29 +44,25 @@ public class MemoryDataWriter implements Runnable {
 				ie.printStackTrace();
 			}
 			
+			List<Object> c_data = null;
 			lock.lock();	
 			try {
-				if(data.size() > 0) {
-					Logging.log("before writing, size: " + data.size());
-					if (this.persistent_style == PersistentStyle.DB)
-						DataWriter.writeData2DB(data, task_name, dto);
-					else
-						DataWriter.writeData2ES(data, task_name, dto);
-					data = new ArrayList<Object>();
-				}
+				c_data = new ArrayList<Object>(data);
+				data = new ArrayList<Object>();
 				
 			} finally {
 				lock.unlock();
 			}
-
-
 			
+			if(c_data.size() > 0) {
+				Logging.log("before writing, size: " + c_data.size());
+				if (this.persistent_style == PersistentStyle.DB)
+					DataWriter.writeData2DB(c_data, task_name, dto);
+				else
+					DataWriter.writeData2ES(c_data, task_name, dto);
+			}
+
 		}
-	}
-
-	public static void main(String[] args) {
-		
-
 	}
 
 }
