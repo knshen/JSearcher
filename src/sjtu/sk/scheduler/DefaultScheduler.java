@@ -41,8 +41,10 @@ import sjtu.sk.balance.Node;
  *
  */
 public class DefaultScheduler implements Runnable {
-	public static final int numVirtualNodes = 3; // Virtual Node in ConsistentHash
-	public static final int politeness = 500; // a thread sleep for a while after a request
+	public static final int NUM_VIRTUAL_NODES = 3; // Virtual Node in ConsistentHash
+	public static final int POLITENESS = 500; // a thread sleep for a while after a request
+	public static final int MAX_TOLERANCE = 10; // when finding url queue is empty up to 
+													   // tolerance_threashold, break!
 	
 	private HtmlDownloader hd = null;
 	private HtmlParser hp = null;
@@ -50,6 +52,7 @@ public class DefaultScheduler implements Runnable {
 	private Outputer out = null;
 	private DataExtractor de = null;
 	
+	private int tolerance = 0; // number of 
 	private List<Object> total_data = new ArrayList<Object>(); // global crawled data 
 	private int num_threads; // number of threads
 	private boolean isThreadPool = false;
@@ -126,7 +129,7 @@ public class DefaultScheduler implements Runnable {
 		
 		// init cluster info
 		cluster = XMLReader.readClusterConfig("cluster.xml");
-		ch = new ConsistentHash<Node>(new HashFunction(), numVirtualNodes, cluster);
+		ch = new ConsistentHash<Node>(new HashFunction(), NUM_VIRTUAL_NODES, cluster);
 	}
 	
 	/**
@@ -153,6 +156,7 @@ public class DefaultScheduler implements Runnable {
 			receiver.start();
 			
 			Thread writer = new Thread(new MemoryDataWriter(lock, total_data, dto, task_name, persistent_style));
+			writer.setPriority(Thread.MAX_PRIORITY); // force to flush data
 			writer.start();
 			
 			List<Thread> workers = new ArrayList<Thread>();
@@ -169,6 +173,8 @@ public class DefaultScheduler implements Runnable {
 					ie.printStackTrace();
 				}
 			}
+			
+			//Logging.log("count: " + this.count + "\n");
 			
 			// flush remaining data to DB/ES
 			Logging.log("before writing, size: " + total_data.size());
@@ -216,7 +222,15 @@ public class DefaultScheduler implements Runnable {
 			// no url to visit (url queue is empty!)
 			if(new_url == null) {
 				try {
+					if(tolerance >= MAX_TOLERANCE)
+						break;
 					Thread.sleep(1000); // wait 1s
+					lock.lock();
+					try {
+						tolerance = Util.increaseOne(tolerance, MAX_TOLERANCE);
+					} finally {
+						lock.unlock();
+					}
 				} catch(InterruptedException ie) {
 					ie.printStackTrace();
 				}
@@ -277,7 +291,7 @@ public class DefaultScheduler implements Runnable {
 			}
 			
 			try {
-				Thread.sleep(politeness);
+				Thread.sleep(POLITENESS);
 			} catch(InterruptedException ie) {
 				ie.printStackTrace();
 			}		

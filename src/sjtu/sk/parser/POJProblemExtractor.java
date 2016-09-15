@@ -7,13 +7,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import dto.user.POJDTO;
+import dto.user.OJDTO;
 
 public class POJProblemExtractor extends DataExtractor {
 	public List<Object> extract(Document doc, String url) {
 		List<Object> res = new ArrayList<Object>();
 		
-		POJDTO dto = new POJDTO();
+		OJDTO dto = new OJDTO();
 		dto.setUrl(url);
 		int id = Integer.parseInt(url.split("=")[1]);
 		dto.setId(id);

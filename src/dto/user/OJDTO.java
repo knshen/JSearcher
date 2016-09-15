@@ -1,6 +1,6 @@
 package dto.user;
 
-public class POJDTO {
+public class OJDTO {
 	private String title;
 	private String content; // description + input + output + sample input + sample output
 	private long submit;
@@ -69,7 +69,7 @@ public class POJDTO {
 		this.content = content;
 	}
 
-	public POJDTO() {
+	public OJDTO() {
 		
 	}
 	
