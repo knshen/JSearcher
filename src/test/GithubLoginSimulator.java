@@ -1,4 +1,4 @@
-package sjtu.sk.downloader;
+package test;
 
 import java.io.*;
 
@@ -8,6 +8,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
+import sjtu.sk.downloader.LoginSimulator;
 import sjtu.sk.url.manager.URL;
 
 public class GithubLoginSimulator extends LoginSimulator {
@@ -35,7 +36,7 @@ public class GithubLoginSimulator extends LoginSimulator {
 	        HtmlPage page2 = hi.click();  
 	        return page2.asXml();
 
-		} catch(IOException ioe) {
+		} catch(IOException ioe)  {
 			ioe.printStackTrace();
 			return null;
 		}

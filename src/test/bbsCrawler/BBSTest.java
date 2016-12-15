@@ -1,28 +1,25 @@
-package test;
+package test.bbsCrawler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import sjtu.sk.filter.HDULinkFilter;
-import sjtu.sk.parser.HDUProblemExtractor;
-import sjtu.sk.parser.POJProblemExtractor;
 import sjtu.sk.scheduler.DefaultScheduler;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.PersistentStyle;
+import test.pojCrawler.BBSPostLinkFilter;
 
-public class HDUTest {
+public class BBSTest {
 
 	public static void main(String[] args) {
-		//demo: crawl hdu oj problems
-		List<URL> seeds = new ArrayList<URL>();
-		for(int i=1000; i<=5500; i++) {
-			URL seed = new URL("http://acm.hdu.edu.cn/showproblem.php?pid=" + i);
-			seeds.add(seed);
-		}
+		//demo 2: crawl bbs jobInfo posts
 		
-		System.out.println("finish adding seeds!");
+		final int first_id = 6775; // 6775
+		
+		List<URL> seeds = new ArrayList<URL>();
+		for(int i=first_id; i>=6400; i--) {
+			URL url = new URL("https://bbs.sjtu.edu.cn/bbsdoc,board,JobInfo,page,"
+					+ i + ".html");
+			seeds.add(url);
+		}
 		
 		//create scheduler instance
 		DefaultScheduler ds = DefaultScheduler.createDefaultScheduler();
@@ -42,21 +39,20 @@ public class HDUTest {
  		 */
 		Map<String, Object> paras = new HashMap<String, Object>();
 		
-		paras.put("dataExtractor", new HDUProblemExtractor());
-		paras.put("num_threads", 20);
+		paras.put("dataExtractor", new BBSPostExtractor());
+		paras.put("num_threads", 1);
 		paras.put("isThreadPool", false);
-		paras.put("maxNum", 5000);
+		paras.put("maxNum", 100);
 		paras.put("persistent_style", PersistentStyle.ES);
-		paras.put("task_name", "oj-hdu");
-		paras.put("dto", "dto.user.OJDTO");
+		paras.put("task_name", "bbs-job");
+		paras.put("dto", "dto.user.BBSPostDTO");
 		//paras.put("comparator", null);
-		paras.put("filter", new HDULinkFilter());
+		paras.put("filter", new BBSPostLinkFilter());
 		//paras.put("outputer", null);
 		ds.config(paras);
 		
 		// run tasks
 		ds.runTask(seeds);
-
 
 	}
 

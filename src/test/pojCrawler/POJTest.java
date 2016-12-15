@@ -1,25 +1,19 @@
-package test;
+package test.pojCrawler;
 
 import java.util.*;
 
-import sjtu.sk.filter.BBSPostLinkFilter;
-import sjtu.sk.parser.BBSPostExtractor;
 import sjtu.sk.scheduler.DefaultScheduler;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.PersistentStyle;
 
-public class BBSTest {
+public class POJTest {
 
 	public static void main(String[] args) {
-		//demo 2: crawl bbs jobInfo posts
-		
-		final int first_id = 6775; // 6775
-		
+		//demo 2: crawl poj problem
 		List<URL> seeds = new ArrayList<URL>();
-		for(int i=first_id; i>=6400; i--) {
-			URL url = new URL("https://bbs.sjtu.edu.cn/bbsdoc,board,JobInfo,page,"
-					+ i + ".html");
-			seeds.add(url);
+		for(int i=1000; i<=4054; i++) {
+			URL seed = new URL("http://poj.org/problem?id=" + i);
+			seeds.add(seed);
 		}
 		
 		//create scheduler instance
@@ -40,15 +34,15 @@ public class BBSTest {
  		 */
 		Map<String, Object> paras = new HashMap<String, Object>();
 		
-		paras.put("dataExtractor", new BBSPostExtractor());
-		paras.put("num_threads", 10);
+		paras.put("dataExtractor", new POJProblemExtractor());
+		paras.put("num_threads", 20);
 		paras.put("isThreadPool", false);
 		paras.put("maxNum", 3000);
 		paras.put("persistent_style", PersistentStyle.ES);
-		paras.put("task_name", "bbs-job");
-		paras.put("dto", "dto.user.BBSPostDTO");
+		paras.put("task_name", "oj-poj");
+		paras.put("dto", "dto.user.OJDTO");
 		//paras.put("comparator", null);
-		paras.put("filter", new BBSPostLinkFilter());
+		//paras.put("filter", new LeetcodeURLFilter());
 		//paras.put("outputer", null);
 		ds.config(paras);
 		

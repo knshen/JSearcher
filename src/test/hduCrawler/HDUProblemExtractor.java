@@ -1,4 +1,4 @@
-package sjtu.sk.parser;
+package test.hduCrawler;
 
 import java.util.*;
 
@@ -8,7 +8,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import sjtu.sk.logging.Logging;
-import dto.user.OJDTO;
+import sjtu.sk.parser.DataExtractor;
+import test.dto.OJDTO;
 
 public class HDUProblemExtractor extends DataExtractor {
 	public List<Object> extract(Document doc, String url) {

@@ -10,10 +10,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import dto.user.Picture;
 import sjtu.sk.logging.Logging;
 import sjtu.sk.util.OperatingSystem;
 import sjtu.sk.util.Util;
+import test.dto.Picture;
 
 public class ImageExtractor extends DataExtractor {
 	public List<Object> extract(Document doc, String url) {

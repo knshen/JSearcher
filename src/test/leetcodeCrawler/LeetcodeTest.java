@@ -1,13 +1,10 @@
-package test;
+package test.leetcodeCrawler;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import sjtu.sk.filter.LeetcodeLinkFilter;
-import sjtu.sk.parser.LeetcodeProblemExtractor;
 import sjtu.sk.scheduler.DefaultScheduler;
-import sjtu.sk.url.manager.LeetcodeURLComparator;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.PersistentStyle;
 

@@ -18,7 +18,6 @@ import sjtu.sk.outputer.Outputer;
 import sjtu.sk.parser.DataExtractor;
 import sjtu.sk.parser.HtmlParser;
 import sjtu.sk.parser.ImageExtractor;
-import sjtu.sk.parser.LeetcodeProblemExtractor;
 import sjtu.sk.storage.DataWriter;
 import sjtu.sk.storage.MemoryDataWriter;
 import sjtu.sk.url.manager.URL;

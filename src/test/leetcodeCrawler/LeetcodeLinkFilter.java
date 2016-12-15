@@ -1,7 +1,8 @@
-package sjtu.sk.filter;
+package test.leetcodeCrawler;
 
 import java.util.*;
 
+import sjtu.sk.filter.LinkFilter;
 import sjtu.sk.url.manager.Link;
 import sjtu.sk.url.manager.URL;
 

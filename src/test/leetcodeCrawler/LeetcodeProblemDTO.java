@@ -1,4 +1,4 @@
-package dto.user;
+package test.leetcodeCrawler;
 
 public class LeetcodeProblemDTO {
 	private int id;

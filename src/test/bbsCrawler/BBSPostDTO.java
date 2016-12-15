@@ -1,4 +1,4 @@
-package dto.user;
+package test.bbsCrawler;
 
 import java.util.Date;
 

@@ -1,7 +1,8 @@
-package sjtu.sk.filter;
+package test.pojCrawler;
 
 import java.util.Arrays;
 
+import sjtu.sk.filter.LinkFilter;
 import sjtu.sk.url.manager.Link;
 
 public class BBSPostLinkFilter extends LinkFilter {

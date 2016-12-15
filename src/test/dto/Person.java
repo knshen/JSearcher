@@ -1,4 +1,4 @@
-package dto.user;
+package test.dto;
 
 import java.util.*;
 import java.util.Map.Entry;

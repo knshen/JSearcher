@@ -1,6 +1,9 @@
-package sjtu.sk.url.manager;
+package test.leetcodeCrawler;
 
 import java.util.*;
+
+import sjtu.sk.url.manager.URL;
+import sjtu.sk.url.manager.URLComparator;
 
 public class LeetcodeURLComparator extends URLComparator<URL> {
 	public int compare(URL url1, URL url2) {

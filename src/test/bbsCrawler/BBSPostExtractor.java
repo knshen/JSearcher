@@ -1,4 +1,4 @@
-package sjtu.sk.parser;
+package test.bbsCrawler;
 
 import java.util.*;
 
@@ -7,7 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import dto.user.BBSPostDTO;
+import sjtu.sk.parser.DataExtractor;
 
 public class BBSPostExtractor extends DataExtractor{
 	public List<Object> extract(Document doc, String url) {

@@ -3,7 +3,6 @@ package sjtu.sk.scheduler;
 import java.util.*;
 
 import sjtu.sk.logging.Logging;
-import sjtu.sk.parser.LeetcodeProblemExtractor;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.PersistentStyle;
 
@@ -65,38 +64,6 @@ public class MultiTaskSecheduler implements Runnable {
 	}
 	
 	public static void main(String[] args) {
-		MultiTaskSecheduler mts = MultiTaskSecheduler.createMultiTaskSecheduler(2);
-
-		URL seed = new URL("https://leetcode.com/problemset/algorithms/");
-		// configure parameters
-		Map<String, Object> paras1 = new HashMap<String, Object>();
-		paras1.put("dataExtractor", new LeetcodeProblemExtractor());
-		paras1.put("num_threads", 5);
-		paras1.put("isThreadPool", false);
-		paras1.put("maxNum", 30);
-		paras1.put("persistent_style", PersistentStyle.ES);
-		paras1.put("task_name", "leetcode-problem");
-		paras1.put("dto", "dto.user.LeetCodeProblemDTO");
-		
-		/*
-		Map<String, Object> paras2 = new HashMap<String, Object>();
-		paras2.put("dataExtractor", new LeetcodeProblemTitleExtractor());
-		paras2.put("num_threads", 5);
-		paras2.put("isThreadPool", false);
-		paras2.put("maxNum", 30);
-		paras2.put("persistent_style", PersistentStyle.ES);
-		paras2.put("task_name", "leetcode-problemTitle");
-		paras2.put("dto", "dto.user.LeetCodeTitleDTO");
-		*/
-		List<Map<String, Object>> paras = new ArrayList<Map<String, Object>>();
-		paras.add(paras1);
-		//paras.add(paras2);
-		
-		List<List<URL>> seeds = new ArrayList<List<URL>>();
-		seeds.add(Arrays.asList(seed));
-		seeds.add(Arrays.asList(seed));
-		mts.config(paras, seeds);
-		mts.runTasks();
 	}
 
 }

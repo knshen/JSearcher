@@ -6,10 +6,10 @@ import java.util.*;
 
 import com.mongodb.*;
 
-import dto.user.Person;
 import sjtu.sk.util.Condition;
 import sjtu.sk.util.Triple;
 import sjtu.sk.util.Util;
+import test.dto.Person;
 
 /**
  * Java API that encapsulates part of MongoDB query and insert operations

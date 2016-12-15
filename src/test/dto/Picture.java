@@ -1,4 +1,4 @@
-package dto.user;
+package test.dto;
 
 public class Picture {
 	private String filePath;

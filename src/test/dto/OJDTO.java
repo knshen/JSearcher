@@ -1,4 +1,4 @@
-package dto.user;
+package test.dto;
 
 public class OJDTO {
 	private String title;

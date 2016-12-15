@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sjtu.sk.filter.LeetcodeLinkFilter;
 import sjtu.sk.filter.LinkFilter;
 import sjtu.sk.storage.DataWriter;
 import sjtu.sk.util.BloomFilter;
@@ -84,15 +83,6 @@ public class URLManager {
 	
 	public static void main(String args[]) {
 		// unit test
-		URLManager um = new URLManager();
-		um.setURLComparator(new LeetcodeURLComparator());
-		um.addOneURL(new URL("https://leetcode.com/problemset/algorithms/"));
-		um.addOneURL(new URL("https://leetcode.com/contest/"));
-		um.addOneURL(new URL("https://leetcode.com/problems/find-the-difference/"));
-		um.addOneURL(new URL("https://leetcode.com/problems/super-pow/"));
-		
-		for(int i=0; i<4; i++)
-			System.out.println(um.fetchOneURL().print());
 	}
 	
 }
