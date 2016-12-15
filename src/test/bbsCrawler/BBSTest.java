@@ -44,7 +44,7 @@ public class BBSTest {
 		paras.put("isThreadPool", false);
 		paras.put("maxNum", 100);
 		paras.put("persistent_style", PersistentStyle.ES);
-		paras.put("task_name", "bbs-job");
+		paras.put("task_name", "bbs-test");
 		paras.put("dto", "dto.user.BBSPostDTO");
 		//paras.put("comparator", null);
 		paras.put("filter", new BBSPostLinkFilter());
