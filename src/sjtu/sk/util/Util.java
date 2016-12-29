@@ -15,6 +15,9 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class Util {
+	public static int getRandomInteger(int from, int to) {
+		return (int)(Math.random() * (to - from)) + from;
+	}
 	
 	public static int increaseOne(int num, int val) {
 		if(num >= val) 
