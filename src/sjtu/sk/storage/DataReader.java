@@ -8,7 +8,7 @@ import sjtu.sk.util.Triple;
 
 public class DataReader {
 	public static List<Object> readDataFromDB(Date date, String col_name, String dto, List<List<Triple>> filter, List<String> keys) {
-		DBController dc = DBController.createDBController("localhost", 27017);
+		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		col_name = "data" + dateFormat.format(date) + col_name;
 		
@@ -32,7 +32,7 @@ public class DataReader {
 	public static List<URL> readVisitedURLFromDB(Date date) {
 		List<URL> res = new ArrayList<URL>();
 		
-		DBController dc = DBController.createDBController("localhost", 27017);
+		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		String col_name = "visitedURL" + dateFormat.format(date);
 		

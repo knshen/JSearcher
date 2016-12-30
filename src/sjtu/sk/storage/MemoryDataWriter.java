@@ -56,8 +56,10 @@ public class MemoryDataWriter implements Runnable {
 			
 			if(c_data.size() > 0) {
 				Logging.log("before writing, size: " + c_data.size());
-				if (this.persistent_style == PersistentStyle.DB)
-					DataWriter.writeData2DB(c_data, task_name, dto);
+				if (this.persistent_style == PersistentStyle.MONGO)
+					DataWriter.writeData2MongoDB(c_data, task_name, dto);
+				else if(this.persistent_style == PersistentStyle.MYSQL)
+					;//TODO
 				else
 					DataWriter.writeData2ES(c_data, task_name, dto);
 			}

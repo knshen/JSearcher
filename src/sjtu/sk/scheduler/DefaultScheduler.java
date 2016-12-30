@@ -131,6 +131,10 @@ public class DefaultScheduler implements Runnable {
 		ch = new ConsistentHash<Node>(new HashFunction(), NUM_VIRTUAL_NODES, cluster);
 	}
 	
+	public void setProxyTrue() {
+		this.hd.setProxyTrue();
+	}
+	
 	/**
 	 * 
 	 * @param seed : seed URLs
@@ -175,14 +179,19 @@ public class DefaultScheduler implements Runnable {
 			
 			//Logging.log("count: " + this.count + "\n");
 			
-			// flush remaining data to DB/ES
+			// flush remaining data to DB/ES/others
 			Logging.log("before writing, size: " + total_data.size());
-			if (this.persistent_style == PersistentStyle.DB)
-				DataWriter.writeData2DB(total_data, task_name, dto);
+			if (this.persistent_style == PersistentStyle.MONGO)
+				DataWriter.writeData2MongoDB(total_data, task_name, dto);
+			else if(this.persistent_style == PersistentStyle.MYSQL) 
+				;
+			else if(this.persistent_style == PersistentStyle.OTHER)
+				;
 			else
+				//By default, data must be flushed into ES
 				DataWriter.writeData2ES(total_data, task_name, dto);
 			
-			// output to a file (optional) 
+			// Optionally output to a file(like json or cvs) 
 			if(out != null) {
 				// output html file
 				String path = "";

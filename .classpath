@@ -56,5 +56,6 @@
 	<classpathentry kind="lib" path="libs/activemq-all-5.14.0.jar"/>
 	<classpathentry kind="lib" path="libs/geronimo-jms_1.1_spec-1.1.1.jar"/>
 	<classpathentry kind="lib" path="libs/jdom-2.0.6.jar"/>
+	<classpathentry kind="lib" path="libs/mysql-connector-java-5.1.26-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

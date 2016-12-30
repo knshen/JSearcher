@@ -24,26 +24,27 @@ import sjtu.sk.util.Util;
  *
  */
 public class HtmlDownloader {
+	public static int PROXY_RETRY = 10;
 	private boolean enableProxy = false;
 	private List<String> proxy_pool = null; // each item: proxyIp proxyPort
 
-	public HtmlDownloader(boolean enableProxy) {
-		this.enableProxy = enableProxy;
-		if (enableProxy) {
-			proxy_pool = new ArrayList<String>();
-			try {
-				String item = "";
-				BufferedReader br = new BufferedReader(new FileReader(new File(
-						"proxy.txt")));
-				while ((item = br.readLine()) != null) {
-					proxy_pool.add(item);
-				}
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
+	public void setProxyTrue() {
+		if(this.enableProxy)
+			return;
+		this.enableProxy = true;
+		proxy_pool = new ArrayList<String>();
+		try {
+			String item = "";
+			BufferedReader br = new BufferedReader(new FileReader(new File(
+					"proxy.txt")));
+			while ((item = br.readLine()) != null) {
+				proxy_pool.add(item);
 			}
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * download html by a URL (by get method in HttpClient)
 	 * 
@@ -55,6 +56,8 @@ public class HtmlDownloader {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpGet httpget = new HttpGet(url.getURLValue());
 
+		int trys = 0;
+		
 		while (true) {
 			try {
 				HttpHost proxy = null;
@@ -72,6 +75,7 @@ public class HtmlDownloader {
 				}
 
 				// 执行get请求.
+				trys++;
 				CloseableHttpResponse response = httpclient.execute(httpget);
 				HttpEntity entity = response.getEntity();
 				// Logging.log(response.getStatusLine().toString());
@@ -80,19 +84,18 @@ public class HtmlDownloader {
 					return EntityUtils.toString(entity).trim();
 				}
 
-			} catch(IOException ioe) {
-				return null;
 			} catch (Exception e) {
 				System.out.println("proxy server not available!");
+				if(trys >= PROXY_RETRY)
+					return null;
 				continue;
 			}
 
 		}
-
 	}
 
 	public static void main(String[] args) throws Exception {
-		HtmlDownloader hd = new HtmlDownloader(true);
+		HtmlDownloader hd = new HtmlDownloader();
 		System.out.println(hd.download(new URL("http://www.ifeng.com")));
 	}
 

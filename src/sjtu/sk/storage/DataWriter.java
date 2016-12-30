@@ -8,8 +8,8 @@ import sjtu.sk.url.manager.URL;
 
 public class DataWriter {
 	
-	public static void writeData2DB(List<Object> data, String col_name, String dto) {
-		DBController dc = DBController.createDBController("localhost", 27017);
+	public static void writeData2MongoDB(List<Object> data, String col_name, String dto) {
+		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Date now = new Date();	
 		col_name = "data" + dateFormat.format(now) + col_name;
@@ -35,8 +35,9 @@ public class DataWriter {
 		ec.insert(data, index, type, dto);
 	}
 	
+	// not applied yet
 	public static void writeVisitedURL2DB(List<URL> urls) {
-		DBController dc = DBController.createDBController("localhost", 27017);
+		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Date now = new Date();	
 		String col_name = "visitedURL" + dateFormat.format(now);

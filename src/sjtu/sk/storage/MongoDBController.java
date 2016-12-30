@@ -16,12 +16,12 @@ import test.dto.Person;
  * @author ShenKai
  *
  */
-public class DBController {
+public class MongoDBController {
 	private Mongo mg = null;
 	private DB db = null;
-	private volatile static DBController dc = null;
+	private volatile static MongoDBController dc = null;
 	
-	private DBController(String ip, int port) {
+	private MongoDBController(String ip, int port) {
 		try {
 			mg = new Mongo(ip, port);
 			// connect to default database
@@ -31,11 +31,11 @@ public class DBController {
 		}
 	}
 	
-	public static DBController createDBController(String ip, int port) {
+	public static MongoDBController createDBController(String ip, int port) {
 		if(dc == null) {
-			synchronized(DBController.class) {
+			synchronized(MongoDBController.class) {
 				if(dc == null) {
-					dc = new DBController(ip, port);
+					dc = new MongoDBController(ip, port);
 				}
 			}
 		}
@@ -198,7 +198,7 @@ public class DBController {
 	
 	public static void main(String[] args) throws Exception {
 		// unit test
-		DBController dc = DBController.createDBController("localhost", 27017);
+		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
 			
 		dc.createCol("demo");
 		List<Object> data = new ArrayList<Object>();
