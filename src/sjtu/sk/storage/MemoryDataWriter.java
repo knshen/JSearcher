@@ -59,8 +59,8 @@ public class MemoryDataWriter implements Runnable {
 				if (this.persistent_style == PersistentStyle.MONGO)
 					DataWriter.writeData2MongoDB(c_data, task_name, dto);
 				else if(this.persistent_style == PersistentStyle.MYSQL)
-					;//TODO
-				else
+					DataWriter.writeData2MySQL(c_data, task_name, dto);
+				else if(this.persistent_style == PersistentStyle.ES)
 					DataWriter.writeData2ES(c_data, task_name, dto);
 			}
 

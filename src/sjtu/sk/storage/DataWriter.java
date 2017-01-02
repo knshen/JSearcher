@@ -5,6 +5,8 @@ import java.util.*;
 
 import sjtu.sk.logging.Logging;
 import sjtu.sk.url.manager.URL;
+import sjtu.sk.util.Util;
+import sjtu.sk.util.XMLHandler;
 
 public class DataWriter {
 	
@@ -19,6 +21,14 @@ public class DataWriter {
 		dc.createCol(col_name);
 		
 		dc.insert(col_name, data, dto);
+	}
+	
+	public static void writeData2MySQL(List<Object> data, String table, String dto) {
+		MySQLController mc = MySQLController.createDBController("localhost", 3306, "root", "root");
+		Map<String, List<String>> res = XMLHandler.readDBConfig("db.xml", "JSearcher", table);
+		
+		//mc.removeAll(table);// delete all before insert
+		mc.insert(table, data, dto, res.get("names"), res.get("types"));
 	}
 	
 	public static void writeData2ES(List<Object> data, String task_name, String dto) {
@@ -53,10 +63,10 @@ public class DataWriter {
 	}
 
 	public static void main(String args[]) {
-		List<URL> list = new ArrayList<URL>();
-		list.add(new URL("http://www.baidu.com"));
-		list.add(new URL("http://www.2345.com"));
-		list.add(new URL("http://www.sjtu.edu.cn"));
-		DataWriter.writeVisitedURL2DB(list);
+		//TestDTO dto = new TestDTO();
+		//dto.age = 33;
+		//dto.id = 5;
+		//dto.name = "Jerry";
+		//DataWriter.writeData2MySQL(Arrays.asList(dto), "test", "sjtu.sk.storage.TestDTO");
 	}
 }

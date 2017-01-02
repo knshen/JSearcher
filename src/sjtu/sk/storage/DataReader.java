@@ -5,9 +5,10 @@ import java.util.*;
 
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.Triple;
+import sjtu.sk.util.XMLHandler;
 
 public class DataReader {
-	public static List<Object> readDataFromDB(Date date, String col_name, String dto, List<List<Triple>> filter, List<String> keys) {
+	public static List<Object> readDataFromMongoDB(Date date, String col_name, String dto, List<List<Triple>> filter, List<String> keys) {
 		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		col_name = "data" + dateFormat.format(date) + col_name;
@@ -29,6 +30,12 @@ public class DataReader {
 		return ec.searchAll(index, type, dto);	
 	}
 	
+	public static List<Object> readDataFromMySQL(String table, String dto) {
+		MySQLController mc = MySQLController.createDBController("localhost", 3306, "root", "root");
+		Map<String, List<String>> res = XMLHandler.readDBConfig("db.xml", "JSearcher", table);
+		return mc.queryAll(table, dto, res.get("names"), res.get("types"));
+	}
+	
 	public static List<URL> readVisitedURLFromDB(Date date) {
 		List<URL> res = new ArrayList<URL>();
 		
@@ -45,6 +52,8 @@ public class DataReader {
 	
 	public static void main(String args[]) {
 		//DBReader.readDataFromDB(new Date(), "leetcodeProblemTitles", "dto.user.LeetCodeTitleDTO", null, null);
-		DataReader.readVisitedURLFromDB(new Date());
+		//DataReader.readVisitedURLFromDB(new Date());
+		List<Object> res = DataReader.readDataFromMySQL("test", "sjtu.sk.storage.TestDTO");
+		System.out.println();
 	}
 }

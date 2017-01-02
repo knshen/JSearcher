@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dbs>
+	<db name="JSearcher">
+  		<table name="test">
+				<col>id int</col>
+				<col>name String</col>
+				<col>age int</col>
+  		</table>
+	</db>
+</dbs>

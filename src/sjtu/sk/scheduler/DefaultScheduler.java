@@ -27,7 +27,7 @@ import sjtu.sk.util.BloomFilter;
 import sjtu.sk.util.OperatingSystem;
 import sjtu.sk.util.PersistentStyle;
 import sjtu.sk.util.Util;
-import sjtu.sk.util.XMLReader;
+import sjtu.sk.util.XMLHandler;
 import sjtu.sk.balance.ConsistentHash;
 import sjtu.sk.balance.HashFunction;
 import sjtu.sk.balance.Node;
@@ -76,7 +76,7 @@ public class DefaultScheduler implements Runnable {
 	 * @param configFilePath
 	 */
 	public final void config(String configFilePath) {
-		Map<String, Object> paras = XMLReader.readSchedulerConfig(configFilePath);
+		Map<String, Object> paras = XMLHandler.readSchedulerConfig(configFilePath);
 		config(paras);
 	}
 	
@@ -127,7 +127,7 @@ public class DefaultScheduler implements Runnable {
 		already_sent = new BloomFilter<URL>(2<<24);
 		
 		// init cluster info
-		cluster = XMLReader.readClusterConfig("cluster.xml");
+		cluster = XMLHandler.readClusterConfig("cluster.xml");
 		ch = new ConsistentHash<Node>(new HashFunction(), NUM_VIRTUAL_NODES, cluster);
 	}
 	
@@ -184,10 +184,10 @@ public class DefaultScheduler implements Runnable {
 			if (this.persistent_style == PersistentStyle.MONGO)
 				DataWriter.writeData2MongoDB(total_data, task_name, dto);
 			else if(this.persistent_style == PersistentStyle.MYSQL) 
-				;
+				DataWriter.writeData2MySQL(total_data, task_name, dto);
 			else if(this.persistent_style == PersistentStyle.OTHER)
 				;
-			else
+			else if(this.persistent_style == PersistentStyle.ES)
 				//By default, data must be flushed into ES
 				DataWriter.writeData2ES(total_data, task_name, dto);
 			
