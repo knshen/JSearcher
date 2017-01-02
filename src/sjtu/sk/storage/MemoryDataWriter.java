@@ -36,7 +36,9 @@ public class MemoryDataWriter implements Runnable {
 	}
 
 	public void run() {
-		
+		// if data is not saved to ES/DB, do nothing
+		if(this.persistent_style == PersistentStyle.OTHER)
+			return;
 		while (true) {
 			try {
 				Thread.sleep(CHECK_PERIOD);

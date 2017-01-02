@@ -186,23 +186,15 @@ public class DefaultScheduler implements Runnable {
 			else if(this.persistent_style == PersistentStyle.MYSQL) 
 				DataWriter.writeData2MySQL(total_data, task_name, dto);
 			else if(this.persistent_style == PersistentStyle.OTHER)
-				;
+				// Optionally output to a file(like json or cvs) 
+				// Note: if the PersistentStyle is OTHER, all data will be saved at the end of task
+				if(out != null) 	
+					out.output(task_name, total_data);
+				
 			else if(this.persistent_style == PersistentStyle.ES)
 				//By default, data must be flushed into ES
 				DataWriter.writeData2ES(total_data, task_name, dto);
 			
-			// Optionally output to a file(like json or cvs) 
-			if(out != null) {
-				// output html file
-				String path = "";
-				if(Util.getCurrentOS() == OperatingSystem.LINUX)
-					path = "/home/knshen/test.html";
-				else if(Util.getCurrentOS() == OperatingSystem.WINDOWS) 
-					path = "f://test.html";
-				
-				out.output(path, new Date(), task_name, dto);
-			}
-				
 		}
 		
 		Logging.log("finished the task!\n");

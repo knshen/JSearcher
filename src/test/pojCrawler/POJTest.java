@@ -35,15 +35,15 @@ public class POJTest {
 		Map<String, Object> paras = new HashMap<String, Object>();
 		
 		paras.put("dataExtractor", new POJProblemExtractor());
-		paras.put("num_threads", 20);
+		paras.put("num_threads", 1);
 		paras.put("isThreadPool", false);
-		paras.put("maxNum", 3000);
-		paras.put("persistent_style", PersistentStyle.ES);
+		paras.put("maxNum", 5);
+		paras.put("persistent_style", PersistentStyle.OTHER);
 		paras.put("task_name", "oj-poj");
 		paras.put("dto", "dto.user.OJDTO");
 		//paras.put("comparator", null);
 		//paras.put("filter", new LeetcodeURLFilter());
-		//paras.put("outputer", null);
+		paras.put("outputer", new POJOutputer());
 		ds.config(paras);
 		
 		// run tasks

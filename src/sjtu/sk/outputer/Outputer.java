@@ -9,6 +9,11 @@ import java.util.*;
  *
  */
 public abstract class Outputer {
-	public abstract boolean output(String path, Date date, String task_name, String dto);
+	protected String path;
+	public Outputer(String path) {
+		this.path = path;
+	}
+	
+	public abstract boolean output(String task_name, List<Object> data, String dto);
 		
 }
