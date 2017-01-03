@@ -1,4 +1,4 @@
-package sjtu.sk.parser;
+package test;
 
 import java.util.*;
 import java.io.*;
@@ -11,12 +11,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import sjtu.sk.logging.Logging;
+import sjtu.sk.parser.DataExtractor;
 import sjtu.sk.util.OperatingSystem;
 import sjtu.sk.util.Util;
 import test.dto.Picture;
 
 public class ImageExtractor extends DataExtractor {
+	
 	public List<Object> extract(Document doc, String url) {
+		// The parameter url must be the parent url of image file url
 		List<Object> res = new ArrayList<Object>();
 		
 		Elements images = doc.select("img[src]");
@@ -31,7 +34,7 @@ public class ImageExtractor extends DataExtractor {
 			else if(Util.getCurrentOS() == OperatingSystem.WINDOWS) 
 				savePath = "imageData/" + savePath + ".jpg";
 			
-			if(downloadImage(urlPath, savePath)) {
+			if(Util.downloadBinary(urlPath, savePath)) {
 				Picture pic = new Picture(savePath, urlPath);
 				res.add(pic);
 			}
@@ -40,43 +43,6 @@ public class ImageExtractor extends DataExtractor {
 		return res;
 	}
 	
-	/**
-	 * Use JSoup to download image file according to URL
-	 * @param urlPath : image URL
-	 * @param savePath : image save path (on disk)
-	 * @return : if succeed?
-	 */
-	private boolean downloadImage(String urlPath, String savePath) {
-		if(!Util.isURLLegal(urlPath))
-			return false;
-		
-		urlPath = urlPath.trim();
-		FileOutputStream outputStream = null;
-		try {
-			Connection conn = Jsoup.connect(urlPath).ignoreContentType(true);		 
-			Response response = conn.execute();
-			if(response.statusCode() != 404) {
-				byte data[] = response.bodyAsBytes();
-				outputStream = new FileOutputStream(savePath);
-	            outputStream.write(data);
-	            
-	            return true;
-			}	
-		} catch(IOException ioe) {
-			ioe.printStackTrace();
-		}
-		finally {
-			try {
-				if(outputStream != null) 
-					outputStream.close();
-								
-			} catch(IOException ioe) {
-				ioe.printStackTrace();
-			}
-			
-		}
-		return false;
-	}
 	
 	public static void main(String[] args) throws IOException {
 		DataExtractor de = new ImageExtractor();

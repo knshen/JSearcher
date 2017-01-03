@@ -1,5 +1,7 @@
 package sjtu.sk.util;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,10 +13,52 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.Connection.Response;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 public class Util {
+	/**
+	 * Use JSoup to download binary file according to URL
+	 * @param urlPath : resource URL
+	 * @param savePath : local save path (on disk)
+	 * @return : if succeed?
+	 */
+	public static boolean downloadBinary(String urlPath, String savePath) {
+		if(!Util.isURLLegal(urlPath))
+			return false;
+		
+		urlPath = urlPath.trim();
+		FileOutputStream outputStream = null;
+		try {
+			Connection conn = Jsoup.connect(urlPath).ignoreContentType(true);		 
+			Response response = conn.execute();
+			if(response.statusCode() != 404) {
+				byte data[] = response.bodyAsBytes();
+				outputStream = new FileOutputStream(savePath);
+	            outputStream.write(data);
+	            
+	            return true;
+			}	
+		} catch(IOException ioe) {
+			ioe.printStackTrace();
+		}
+		finally {
+			try {
+				if(outputStream != null) 
+					outputStream.close();
+								
+			} catch(IOException ioe) {
+				ioe.printStackTrace();
+			}
+			
+		}
+		return false;
+	}
+
 	public static int getRandomInteger(int from, int to) {
 		return (int)(Math.random() * (to - from)) + from;
 	}
