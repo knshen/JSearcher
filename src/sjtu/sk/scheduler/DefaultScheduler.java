@@ -155,8 +155,10 @@ public class DefaultScheduler implements Runnable {
 			// worders: crawler threads
 			// receiver: url receiver thread
 			// writer: write in-memory data to disk conditionally
-			Thread receiver = new Thread(new URLReceiver("URLQueue", um));
-			receiver.start();
+			if(cluster.size() > 1) {
+				Thread receiver = new Thread(new URLReceiver("URLQueue", um));
+				receiver.start();
+			}
 			
 			Thread writer = new Thread(new MemoryDataWriter(lock, total_data, dto, task_name, persistent_style));
 			writer.setPriority(Thread.MAX_PRIORITY); // force to flush data
@@ -267,12 +269,16 @@ public class DefaultScheduler implements Runnable {
 				if(count >= maxNum)
 					break;
 				
+				if(cluster.size() <= 1) {
+					 
+				}
 				// deal with new URLs
 				String local_ip = Util.getLocalIP();	
 				for(URL url : new_links) {
 					Node loc = ch.get(url.getURLValue()); // at where should the url be visited
 					//if(loc.getNode_id().equals("node-1")) {
-					if(loc.getIp().equals(local_ip)) {
+					if(loc.getIp().equals(local_ip) || cluster.size() <= 1) {
+						// local mode or the destination is local node
 						um.addOneURL(url); // add locally
 					}
 					else {
