@@ -20,16 +20,13 @@ import sjtu.sk.url.manager.URL;
  *
  */
 public class HtmlParser {
-	private Document doc = null;
-	
-	public Document getDocument() {
-		return this.doc;
-	}
-	
 	public List<URL> parse(String html) {
 		return parse(html, "");
 	}
 	
+	public Document getDocument(String html, String base_url) {
+		return Jsoup.parse(html, base_url);
+	}
 	/**
 	 * extract url links in the html, also save the Document object
 	 * @param html : html string
@@ -37,7 +34,7 @@ public class HtmlParser {
 	 * @return new url links in the html 
 	 */
 	public List<URL> parse(String html, String base_url) {
-		doc = Jsoup.parse(html, base_url);
+		Document doc = Jsoup.parse(html, base_url);
 		//doc = Jsoup.connect("https://leetcode.com/problemset/algorithms/").get();
 		Elements links = doc.select("a[href]");
 		

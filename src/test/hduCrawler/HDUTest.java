@@ -41,7 +41,6 @@ public class HDUTest {
 		
 		paras.put("dataExtractor", new HDUProblemExtractor());
 		paras.put("num_threads", 20);
-		paras.put("isThreadPool", false);
 		paras.put("maxNum", 5000);
 		paras.put("persistent_style", PersistentStyle.ES);
 		paras.put("task_name", "oj-hdu");

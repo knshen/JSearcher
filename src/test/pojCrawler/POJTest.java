@@ -35,8 +35,7 @@ public class POJTest {
 		Map<String, Object> paras = new HashMap<String, Object>();
 		
 		paras.put("dataExtractor", new POJProblemExtractor());
-		paras.put("num_threads", 1);
-		paras.put("isThreadPool", false);
+		paras.put("num_threads", 2);
 		paras.put("maxNum", 5);
 		paras.put("persistent_style", PersistentStyle.OTHER);
 		paras.put("task_name", "oj-poj");

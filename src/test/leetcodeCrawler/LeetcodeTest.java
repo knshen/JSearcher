@@ -36,7 +36,6 @@ public class LeetcodeTest {
 		
 		paras.put("dataExtractor", new LeetcodeProblemExtractor());
 		paras.put("num_threads", 20);
-		paras.put("isThreadPool", false);
 		paras.put("maxNum", 500);
 		paras.put("persistent_style", PersistentStyle.ES);
 		paras.put("task_name", "oj-leetcode");

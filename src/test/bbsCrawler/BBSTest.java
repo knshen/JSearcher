@@ -41,7 +41,6 @@ public class BBSTest {
 		
 		paras.put("dataExtractor", new BBSPostExtractor());
 		paras.put("num_threads", 1);
-		paras.put("isThreadPool", false);
 		paras.put("maxNum", 100);
 		paras.put("persistent_style", PersistentStyle.ES);
 		paras.put("task_name", "bbs-test");
