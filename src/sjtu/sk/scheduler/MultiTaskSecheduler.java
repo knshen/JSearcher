@@ -12,35 +12,19 @@ public class MultiTaskSecheduler implements Runnable {
 	private List<Thread> tasks = null;
 	private List<List<URL>> seeds = new ArrayList<List<URL>>();
 	
-	private MultiTaskSecheduler(int num_tasks) {
+	private MultiTaskSecheduler(int num_tasks, List<String> paths) {
 		this.num_tasks = num_tasks;
 		this.crawlers = new ArrayList<DefaultScheduler>();
 		for(int i=0; i<num_tasks; i++)
-			crawlers.add(DefaultScheduler.createDefaultScheduler());
+			crawlers.add(DefaultScheduler.createDefaultScheduler(paths.get(i)));
 		
 		tasks = new ArrayList<Thread>();
 		for(int i=0; i<num_tasks; i++)
 			tasks.add(new Thread(this));
 	}
 	
-	public static MultiTaskSecheduler createMultiTaskSecheduler(int num_tasks) {
-		return new MultiTaskSecheduler(num_tasks);
-	}
-	
-	public final void config(List<Map<String, Object>> paras, List<List<URL>> seeds) {
-		if(paras == null || paras.size() != num_tasks) {
-			Logging.log("configure fail!\n");
-			return;
-		}		
-		if(seeds == null || seeds.size() != num_tasks) {
-			Logging.log("configure fail!\n");
-			return;
-		}
-		
-		for(int i=0; i<num_tasks; i++) 
-			crawlers.get(i).config(paras.get(i));
-		
-		this.seeds = seeds;
+	public static MultiTaskSecheduler createMultiTaskSecheduler(int num_tasks, List<String> paths) {
+		return new MultiTaskSecheduler(num_tasks, paths);
 	}
 	
 	public void runTasks() {
@@ -64,6 +48,7 @@ public class MultiTaskSecheduler implements Runnable {
 	}
 	
 	public static void main(String[] args) {
+		
 	}
 
 }

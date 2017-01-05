@@ -29,6 +29,7 @@ import sjtu.sk.util.OperatingSystem;
 import sjtu.sk.util.PersistentStyle;
 import sjtu.sk.util.Util;
 import sjtu.sk.util.XMLHandler;
+import sjtu.sk.util.YamlHandler;
 import sjtu.sk.balance.ConsistentHash;
 import sjtu.sk.balance.HashFunction;
 import sjtu.sk.balance.Node;
@@ -41,30 +42,26 @@ import sjtu.sk.balance.Node;
  *
  */
 public class DefaultScheduler {
-	public static final int NUM_VIRTUAL_NODES = 3; // Virtual Node in ConsistentHash
-	public static final int POLITENESS = 500; // a thread sleep for a while after a request
-	public static final int MAX_TOLERANCE = 10; // when finding url queue is empty up to 
-													   // tolerance_threashold, break!
-	private HtmlDownloader hd = null;
-	private HtmlParser hp = null;
-	private URLManager um = null;
-	private Outputer out = null;
-	private DataExtractor de = null;
 	
+	HtmlDownloader hd = null;
+	private HtmlParser hp = null;
+	URLManager um = null;
+	Outputer out = null;
+	DataExtractor de = null;
 	private final Lock lock = new ReentrantLock(); 
 	private List<Object> total_data = new ArrayList<Object>(); // global crawled data 
-	private int num_threads; // number of threads
+	private BloomFilter<URL> already_sent = null;
+	
 	private int tolerance = 0;
 	private int count = 0; // number of pages have visited
-	private int maxNum = 0; // max number of pages to visist
-	private int persistent_style = PersistentStyle.ES; // save data to where?
-	private String task_name = "";
-	private String dto = "";
-
-	private ConsistentHash<Node> ch = null; // load balancer
-	private List<Node> cluster = null; // cluster (physical nodes)
 	
-	private BloomFilter<URL> already_sent = null;
+	//parameters to set(within a scheduler)
+	int num_threads; // number of threads
+	int maxNum = 0; // max number of pages to visist
+	int persistent_style = PersistentStyle.ES; // save data to where?
+	String task_name = ""; // task name
+	String dto = ""; // path of dto definition
+
 	
 	class CrawlTask implements Callable<String> {
 		public String call() {
@@ -90,12 +87,12 @@ public class DefaultScheduler {
 				// no url to visit (url queue is empty!)
 				if(new_url == null) {
 					try {
-						if(tolerance >= MAX_TOLERANCE)
+						if(tolerance >= SpiderConfig.MAX_TOLERANCE)
 							break;
 						Thread.sleep(1000); // wait 1s
 						lock.lock();
 						try {
-							tolerance = Util.increaseOne(tolerance, MAX_TOLERANCE);
+							tolerance = Util.increaseOne(tolerance, SpiderConfig.MAX_TOLERANCE);
 						} finally {
 							lock.unlock();
 						}
@@ -138,9 +135,9 @@ public class DefaultScheduler {
 					// deal with new URLs
 					String local_ip = Util.getLocalIP();	
 					for(URL url : new_links) {
-						Node loc = ch.get(url.getURLValue()); // at where should the url be visited
+						Node loc = SpiderConfig.ch.get(url.getURLValue()); // at where should the url be visited
 						//if(loc.getNode_id().equals("node-1")) {
-						if(loc.getIp().equals(local_ip) || cluster.size() <= 1) {
+						if(loc.getIp().equals(local_ip) || SpiderConfig.cluster.size() <= 1) {
 							// local mode or the destination is local node
 							um.addOneURL(url); // add locally
 						}
@@ -160,7 +157,7 @@ public class DefaultScheduler {
 				}
 				
 				try {
-					Thread.sleep(POLITENESS);
+					Thread.sleep(SpiderConfig.POLITENESS);
 				} catch(InterruptedException ie) {
 					ie.printStackTrace();
 				}		
@@ -169,71 +166,27 @@ public class DefaultScheduler {
 		
 	}
 	
-	public static DefaultScheduler createDefaultScheduler() {
-		return new DefaultScheduler();
+	public static DefaultScheduler createDefaultScheduler(String configFilePath) {
+		return new DefaultScheduler(configFilePath);
 	}
 	
-	/**
-	 * another way (by XML) to configure parameters of the Spider 
-	 * @param configFilePath
-	 */
-	public final void config(String configFilePath) {
-		Map<String, Object> paras = XMLHandler.readSchedulerConfig(configFilePath);
-		config(paras);
-	}
-	
-	/**
-	 * configure parameters of the Spider through a Map
-	 * @param out
-	 * @param de
-	 * @param num_threads
-	 * @param isThreadPool
-	 * @param maxNum
-	 */
-	public final void config(Map<String, Object> paras) {
-		// config other parameters
-		if(paras == null)
-			return;
-		for(Map.Entry<String, Object> para : paras.entrySet()) {
-			String key = para.getKey().toLowerCase();
-			if(key.equals("outputer"))
-				this.out = (Outputer)(para.getValue());
-			if(key.equals("dataextractor"))
-				this.de = (DataExtractor)(para.getValue());
-			if(key.equals("num_threads"))
-				this.num_threads = (int)(para.getValue());
-			if(key.equals("maxnum"))
-				this.maxNum = (int)(para.getValue());
-			if(key.equals("persistent_style"))
-				this.persistent_style = (int)(para.getValue());
-			if(key.equals("task_name"))
-				this.task_name = para.getValue().toString();
-			if(key.equals("dto"))
-				this.dto = para.getValue().toString();
-			if(key.equals("filter")) 
-				um.setFilter((LinkFilter)(para.getValue()));
-			if(key.equals("comparator")) 
-				um.setURLComparator((URLComparator<URL>)(para.getValue()));
-		
-		}
-	}
-	
-	private DefaultScheduler() {
+	private DefaultScheduler(String configFilePath) {
 		// initialization
 		um = new URLManager();
 		hd = new HtmlDownloader();
 		hp = new HtmlParser();
-		cluster = new ArrayList<Node>();
+		
 		already_sent = new BloomFilter<URL>(2<<24);
 		
+		// configure single scheduler parameters:
+		SpiderConfig.config(this, configFilePath);
+	
 		// init cluster info
-		cluster = XMLHandler.readClusterConfig("cluster.xml");
-		ch = new ConsistentHash<Node>(new HashFunction(), NUM_VIRTUAL_NODES, cluster);
+		SpiderConfig.cluster = YamlHandler.getClusterConfig(configFilePath);
+		SpiderConfig.ch = new ConsistentHash<Node>(new HashFunction(), SpiderConfig.NUM_VIRTUAL_NODES, SpiderConfig.cluster);
 	}
 	
-	public void setProxyTrue() {
-		this.hd.setProxyTrue();
-	}
+	
 	
 	/**
 	 * 
@@ -248,7 +201,7 @@ public class DefaultScheduler {
 		// workers: crawler threads
 		// receiver: url receiver thread
 		// writer: write in-memory data to disk conditionally
-		if(cluster.size() > 1) {
+		if(SpiderConfig.cluster.size() > 1) {
 			Thread receiver = new Thread(new URLReceiver("URLQueue", um));
 			receiver.start();
 		}

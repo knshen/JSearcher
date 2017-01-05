@@ -43,58 +43,13 @@ public class XMLHandler {
 	}
 	
 	/**
-	 * get cluster info
+	 * read mysql table configuration file (this configuration is needed only when the persistent
+	 * style is MySQL)
 	 * @param filePath
+	 * @param db
+	 * @param table
 	 * @return
 	 */
-	public static List<Node> readClusterConfig(String filePath) {
-		List<Node> nodes = new ArrayList<Node>();
-		/**
-		 * <node>
-		 *   <node_id>...</node_id>
-		 *   <node_ip>...</node_ip>
-		 */
-		try {
-			SAXBuilder builder = new SAXBuilder();  
-	        Document document = builder.build(filePath);  
-	        Element root = document.getRootElement();  
-	        List<Element> node_eles = root.getChildren();
-
-	        for(Element node_ele : node_eles) {
-	        	Element name = node_ele.getChild("name");
-	        	Element ip = node_ele.getChild("ip");
-	        	Node node = new Node(name.getValue(), ip.getValue());
-	        	nodes.add(node);
-	        }
-	        
-		} catch(IOException ioe) {
-			ioe.printStackTrace();
-		} catch(JDOMException jde) {
-			jde.printStackTrace();
-		}
-		return nodes;
-	}
-	
-	public static Map<String, Object> readSchedulerConfig(String filePath) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			SAXBuilder builder = new SAXBuilder();  
-	        Document document = builder.build(filePath);  
-	        Element root = document.getRootElement();  
-	        List<Element> items = root.getChildren();
-	        
-	        for(Element item : items) {
-	        	map.put(item.getName(), item.getValue());
-	        }
-	        
-		} catch(IOException ioe) {
-			ioe.printStackTrace();
-		} catch(JDOMException jde) {
-			jde.printStackTrace();
-		}
-		return map;
-	}
-	
 	public static Map<String, List<String>> readDBConfig(String filePath, String db, String table) {
 		Map<String, List<String>> res = new HashMap<String, List<String>>();
 		List<String> col_names = new ArrayList<String>();

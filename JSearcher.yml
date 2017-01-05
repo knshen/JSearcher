@@ -1,0 +1,20 @@
+# number of threads
+num_threads: 2
+
+# maximum pages to crawl 
+maxnum: 5
+
+# task name
+task_name: oj-poj
+
+# path of dto Class definition
+dto: test.dto.OJDTO
+
+# persistent style (MySQL=0, MongoDB=1, ElasticSearch=2, Other=3)
+persistent_style: 3
+
+# cluster information
+cluster:
+   node1:
+     name: kaiShen
+     ip: 192.168.1.58
