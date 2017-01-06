@@ -36,7 +36,7 @@ public class HtmlDownloader {
 		try {
 			String item = "";
 			BufferedReader br = new BufferedReader(new FileReader(new File(
-					"proxy.txt")));
+					"proxy")));
 			while ((item = br.readLine()) != null) {
 				proxy_pool.add(item);
 			}
