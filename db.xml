@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dbs>
 	<db name="JSearcher">
-  		<table name="test">
+  		<table name="poj">
 				<col>id int</col>
-				<col>name String</col>
-				<col>age int</col>
+				<col>title String</col>
+				<col>content String</col>
+				<col>submit long</col>
+				<col>accept long</col>
+				<col>acRatio double</col>
+				<col>url String</col>
   		</table>
 	</db>
 </dbs>

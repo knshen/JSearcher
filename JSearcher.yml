@@ -5,7 +5,7 @@ num_threads: 2
 maxnum: 5
 
 # task name
-task_name: oj-poj
+task_name: poj
 
 # path of dto Class definition
 dto: test.dto.OJDTO
@@ -18,3 +18,28 @@ cluster:
    node1:
      name: kaiShen
      ip: 192.168.1.58
+
+
+# You should choose at most one from the following three persistent styles
+# MySQL configuration
+mysql:
+   host: localhost
+   port: 3306
+   db: JSearcher
+   user: root
+   password: root
+   
+# MongoDB configuration
+#mongodb:
+#   host: localhost
+#   port: 27017
+#   db: jsearcher
+   
+# ElasticSearch configuration
+#es:
+#   host: localhost
+#   port: 9300
+#   cluster_name: knshen-cluster
+
+
+

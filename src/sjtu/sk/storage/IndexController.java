@@ -31,23 +31,23 @@ public class IndexController {
 	private static IndexController ic = null;
 	private static Client client = null;
 
-	private IndexController(InetAddress ia) {
+	private IndexController(InetAddress ia, String cluster_name, int port) {
 		// build TransportClient
 		Settings settings = Settings.settingsBuilder()
-				.put("cluster.name", "knshen-cluster")
+				.put("cluster.name", cluster_name)
 				.put("client.transport.sniff", true).build();
 
 		client = TransportClient.builder().settings(settings).build()
-				.addTransportAddress(new InetSocketTransportAddress(ia, 9300));
+				.addTransportAddress(new InetSocketTransportAddress(ia, port));
 	}
 
-	public static IndexController createIndexControllerInstance(String master_ip) {
+	public static IndexController createIndexControllerInstance(String master_ip, int port, String cluster_name) {
 		if (ic == null) {
 			synchronized (IndexController.class) {
 				if (ic == null) {
 					try {
 						ic = new IndexController(
-								InetAddress.getByName("localhost"));
+								InetAddress.getByName(master_ip), cluster_name, port);
 					} catch (UnknownHostException uhe) {
 						uhe.printStackTrace();
 					}
@@ -198,7 +198,7 @@ public class IndexController {
 
 	public static void main(String[] args) {
 		IndexController ic = IndexController
-				.createIndexControllerInstance("localhost");
+				.createIndexControllerInstance("localhost", 9300, "knshen-cluster");
 		//ic.searchAll("leetcode", "problem", "dto.user.LeetcodeProblemDTO");	
 		ic.delete("oj", "hdu");
 		

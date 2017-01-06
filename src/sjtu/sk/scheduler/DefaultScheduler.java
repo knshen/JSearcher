@@ -112,14 +112,18 @@ public class DefaultScheduler {
 				
 				lock.lock();
 				try {
-					count = Util.increaseOne(count, maxNum);
+					int _count = Util.increaseOne(count, maxNum);
+					if(_count - count != 1)
+						break;
+					else
+						count = _count;
 				}
 				finally {
 					lock.unlock();
 				}
 				
 				Logging.log(Thread.currentThread().getName() + " visiting: " + new_url.getURLValue());
-				
+								
 				List<URL> new_links = hp.parse(html, new_url.getURLValue()); // get new URLs 
 				List<Object> data = de.extract(hp.getDocument(html, new_url.getURLValue()), new_url.getURLValue());  // extract data from current page
 				
@@ -128,9 +132,6 @@ public class DefaultScheduler {
 					// add data
 					if(data != null && data.size() > 0) 
 						total_data.addAll(data); 
-					
-					if(count >= maxNum)
-						break;
 					
 					// deal with new URLs
 					String local_ip = Util.getLocalIP();	
@@ -178,7 +179,7 @@ public class DefaultScheduler {
 		
 		already_sent = new BloomFilter<URL>(2<<24);
 		
-		// configure single scheduler parameters:
+		// configure single scheduler parameters(including storage related parameters):
 		SpiderConfig.config(this, configFilePath);
 	
 		// init cluster info
@@ -206,7 +207,7 @@ public class DefaultScheduler {
 			receiver.start();
 		}
 		
-		Thread writer = new Thread(new MemoryDataWriter(lock, total_data, dto, task_name, persistent_style));
+		Thread writer = new MemoryDataWriter(lock, total_data, dto, task_name, persistent_style);
 		writer.setPriority(Thread.MAX_PRIORITY); // force to flush data
 		writer.start();
 		
@@ -222,26 +223,31 @@ public class DefaultScheduler {
 		}
 					
 		pool.shutdown(); //shutdown thread pool
+		try {
+			writer.interrupt();
+			writer.join();
+		} catch(InterruptedException ie) {
+			ie.printStackTrace();
+		}
 		
 		Logging.log("count: " + this.count + "\n");
 		
 		// in the end, flush remaining data to DB/ES/others
-		Logging.log("before writing, size: " + total_data.size());
-		if (this.persistent_style == PersistentStyle.MONGO)
+		Logging.log("After finishing task: before writing, size: " + total_data.size());
+		if (this.persistent_style == PersistentStyle.MONGO && total_data.size() > 0)
 			DataWriter.writeData2MongoDB(total_data, task_name, dto);
-		else if(this.persistent_style == PersistentStyle.MYSQL) 
+		else if(this.persistent_style == PersistentStyle.MYSQL && total_data.size() > 0) 
 			DataWriter.writeData2MySQL(total_data, task_name, dto);
-		else if(this.persistent_style == PersistentStyle.OTHER)
+		else if(this.persistent_style == PersistentStyle.OTHER && total_data.size() > 0)
 			// Optionally output to a file(like json or cvs) 
 			// Note: if the PersistentStyle is OTHER, all data will be saved at the end of task
 			if(out != null) 	
 				out.output(task_name, total_data);
 			
-		else if(this.persistent_style == PersistentStyle.ES)
+		else if(this.persistent_style == PersistentStyle.ES && total_data.size() > 0)
 			//By default, data must be flushed into ES
 			DataWriter.writeData2ES(total_data, task_name, dto);
 
-		
 		Logging.log("finished the task!\n");
 	}
 	

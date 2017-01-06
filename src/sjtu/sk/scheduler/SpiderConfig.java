@@ -26,6 +26,13 @@ public class SpiderConfig {
 	static List<Node> cluster = new ArrayList<Node>(); // cluster (physical nodes)
 	static ConsistentHash<Node> ch = null; // load balancer
 		
+	public static String storage_host;
+	public static int storage_port;
+	public static String db_name;
+	public static String db_user;
+	public static String db_password;
+	public static String ES_cluster_name;
+	
 	public static void setNumVirtualNodes(int num) {
 		NUM_VIRTUAL_NODES = num;
 	}
@@ -92,6 +99,24 @@ public class SpiderConfig {
 				ds.task_name = para.getValue().toString();
 			if(key.equals("dto"))
 				ds.dto = para.getValue().toString();
+		}
+		
+		// configure storage related parameters
+		paras = YamlHandler.getStorageConfig(configFilePath);
+		for(Map.Entry<String, Object> para : paras.entrySet()) {
+			String key = para.getKey().toLowerCase();
+			if(key.equals("host"))
+				storage_host = para.getValue().toString();
+			if(key.equals("port"))
+				storage_port = (int)para.getValue();
+			if(key.equals("db"))
+				db_name = para.getValue().toString();
+			if(key.equals("user"))
+				db_user = para.getValue().toString();
+			if(key.equals("password"))
+				db_password = para.getValue().toString();
+			if(key.equals("cluster_name"))
+				ES_cluster_name = para.getValue().toString();
 		}
 	}
 	

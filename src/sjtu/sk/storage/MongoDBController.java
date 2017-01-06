@@ -21,21 +21,21 @@ public class MongoDBController {
 	private DB db = null;
 	private volatile static MongoDBController dc = null;
 	
-	private MongoDBController(String ip, int port) {
+	private MongoDBController(String ip, int port, String db_name) {
 		try {
 			mg = new Mongo(ip, port);
 			// connect to default database
-			db = mg.getDB("jsearcher");
+			db = mg.getDB(db_name);
 		} catch(UnknownHostException uhe) {
 			uhe.printStackTrace();
 		}
 	}
 	
-	public static MongoDBController createDBController(String ip, int port) {
+	public static MongoDBController createDBController(String ip, int port, String db_name) {
 		if(dc == null) {
 			synchronized(MongoDBController.class) {
 				if(dc == null) {
-					dc = new MongoDBController(ip, port);
+					dc = new MongoDBController(ip, port, db_name);
 				}
 			}
 		}
@@ -198,7 +198,7 @@ public class MongoDBController {
 	
 	public static void main(String[] args) throws Exception {
 		// unit test
-		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
+		MongoDBController dc = MongoDBController.createDBController("localhost", 27017, "jsearcher");
 			
 		dc.createCol("demo");
 		List<Object> data = new ArrayList<Object>();

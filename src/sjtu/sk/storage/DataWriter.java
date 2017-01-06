@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import sjtu.sk.logging.Logging;
+import sjtu.sk.scheduler.SpiderConfig;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.Util;
 import sjtu.sk.util.XMLHandler;
@@ -11,7 +12,7 @@ import sjtu.sk.util.XMLHandler;
 public class DataWriter {
 	
 	public static void writeData2MongoDB(List<Object> data, String col_name, String dto) {
-		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
+		MongoDBController dc = MongoDBController.createDBController(SpiderConfig.storage_host, SpiderConfig.storage_port, SpiderConfig.db_name);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Date now = new Date();	
 		col_name = "data" + dateFormat.format(now) + col_name;
@@ -24,7 +25,7 @@ public class DataWriter {
 	}
 	
 	public static void writeData2MySQL(List<Object> data, String table, String dto) {
-		MySQLController mc = MySQLController.createDBController("localhost", 3306, "root", "root");
+		MySQLController mc = MySQLController.createDBController(SpiderConfig.storage_host, SpiderConfig.storage_port, SpiderConfig.db_user, SpiderConfig.db_password, SpiderConfig.db_name);
 		Map<String, List<String>> res = XMLHandler.readDBConfig("db.xml", "JSearcher", table);
 		
 		//mc.removeAll(table);// delete all before insert
@@ -32,7 +33,7 @@ public class DataWriter {
 	}
 	
 	public static void writeData2ES(List<Object> data, String task_name, String dto) {
-		IndexController ec = IndexController.createIndexControllerInstance("localhost");
+		IndexController ec = IndexController.createIndexControllerInstance(SpiderConfig.storage_host, SpiderConfig.storage_port, SpiderConfig.ES_cluster_name);
 		String index = task_name.split("-")[0];
 		String type = task_name.split("-")[1];
 		
@@ -47,7 +48,7 @@ public class DataWriter {
 	
 	// not applied yet
 	public static void writeVisitedURL2DB(List<URL> urls) {
-		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
+		MongoDBController dc = MongoDBController.createDBController(SpiderConfig.storage_host, SpiderConfig.storage_port, SpiderConfig.db_name);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Date now = new Date();	
 		String col_name = "visitedURL" + dateFormat.format(now);

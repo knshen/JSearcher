@@ -3,13 +3,14 @@ package sjtu.sk.storage;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import sjtu.sk.scheduler.SpiderConfig;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.Triple;
 import sjtu.sk.util.XMLHandler;
 
 public class DataReader {
 	public static List<Object> readDataFromMongoDB(Date date, String col_name, String dto, List<List<Triple>> filter, List<String> keys) {
-		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
+		MongoDBController dc = MongoDBController.createDBController(SpiderConfig.storage_host, SpiderConfig.storage_port, SpiderConfig.db_name);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		col_name = "data" + dateFormat.format(date) + col_name;
 		
@@ -25,13 +26,13 @@ public class DataReader {
 		String index = task_name.split("-")[0];
 		String type = task_name.split("-")[1];
 		
-		IndexController ec = IndexController.createIndexControllerInstance("localhost");
+		IndexController ec = IndexController.createIndexControllerInstance(SpiderConfig.storage_host, SpiderConfig.storage_port, SpiderConfig.ES_cluster_name);
 		
 		return ec.searchAll(index, type, dto);	
 	}
 	
 	public static List<Object> readDataFromMySQL(String table, String dto) {
-		MySQLController mc = MySQLController.createDBController("localhost", 3306, "root", "root");
+		MySQLController mc = MySQLController.createDBController(SpiderConfig.storage_host, SpiderConfig.storage_port, SpiderConfig.db_user, SpiderConfig.db_password, SpiderConfig.db_name);
 		Map<String, List<String>> res = XMLHandler.readDBConfig("db.xml", "JSearcher", table);
 		return mc.queryAll(table, dto, res.get("names"), res.get("types"));
 	}
@@ -39,7 +40,7 @@ public class DataReader {
 	public static List<URL> readVisitedURLFromDB(Date date) {
 		List<URL> res = new ArrayList<URL>();
 		
-		MongoDBController dc = MongoDBController.createDBController("localhost", 27017);
+		MongoDBController dc = MongoDBController.createDBController(SpiderConfig.storage_host, SpiderConfig.storage_port, SpiderConfig.db_name);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		String col_name = "visitedURL" + dateFormat.format(date);
 		

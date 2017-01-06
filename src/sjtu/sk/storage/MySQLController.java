@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
+import sjtu.sk.scheduler.SpiderConfig;
 import sjtu.sk.util.Util;
 
 import org.apache.activemq.spring.Utils;
@@ -16,19 +17,19 @@ public class MySQLController {
 	private static MySQLController mc = null;
 
 	public static MySQLController createDBController(String host, int port,
-			String user, String pass) {
+			String user, String pass, String db_name) {
 		if (mc == null) {
 			synchronized (MySQLController.class) {
 				if (mc == null)
-					mc = new MySQLController(host, port, user, pass);
+					mc = new MySQLController(host, port, user, pass, db_name);
 			}
 		}
 		return mc;
 	}
 
-	private MySQLController(String host, int port, String user, String pass) {
+	private MySQLController(String host, int port, String user, String pass, String db_name) {
 		try {
-			String url = "jdbc:mysql://" + host + ":" + port + "/JSearcher?"
+			String url = "jdbc:mysql://" + host + ":" + port + "/" + db_name + "?"
 					+ "user=" + user + "&password=" + pass
 					+ "&useUnicode=true&characterEncoding=UTF8";
 			Class.forName("com.mysql.jdbc.Driver");
@@ -184,7 +185,7 @@ public class MySQLController {
 						preStmt.setLong(i+1, Long.parseLong(map.get(col_names.get(i)).toString()));
 					else if(col_types.get(i).equals("float") || col_types.get(i).equals("double"))
 						preStmt.setDouble(i+1, Double.parseDouble(map.get(col_names.get(i)).toString()));
-					else if(col_types.get(i).equals("String"))
+					else if(col_types.get(i).equals("String")) 
 						preStmt.setString(i+1, map.get(col_names.get(i)).toString());
 					else if(col_types.get(i).equals("Date"))
 						preStmt.setString(i+1, map.get(col_names.get(i)).toString());
@@ -226,10 +227,11 @@ public class MySQLController {
 	}
 
 	public static void main(String[] args) throws Exception {
-		MySQLController mc = MySQLController.createDBController("localhost", 3306, "root", "root");
+		MySQLController mc = MySQLController.createDBController("localhost", 3306, "root", "root", "JSearcher");
 		//mc.queryAll("test", "sjtu.sk.storage.TestDTO", Arrays.asList("id", "name", "age"), Arrays.asList("int", "String", "int"));
 		//mc.insert("test", Arrays.asList(dto), "sjtu.sk.storage.TestDTO", Arrays.asList("id", "name", "age"), Arrays.asList("int", "String", "int"));
 		//mc.query("sjtu.sk.storage.TestDTO", "select * from test where age < 24", Arrays.asList("id", "name", "age"), Arrays.asList("int", "String", "int"));
+		//mc.queryAll("poj", "test.dto.OJDTO", Arrays.asList("id", "title", "content", "submit", "accept", "acRatio", "url"), Arrays.asList("int", "String", "String", "long", "long", "double", "String"));
 	}
 
 }

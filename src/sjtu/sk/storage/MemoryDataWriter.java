@@ -14,7 +14,7 @@ import sjtu.sk.util.PersistentStyle;
  * @author Kai
  *
  */
-public class MemoryDataWriter implements Runnable {
+public class MemoryDataWriter extends Thread {
 	// time interval between two write operations
 	public static final int CHECK_PERIOD = 10000; 
 	// size threshold to trigger flush operation
@@ -39,31 +39,37 @@ public class MemoryDataWriter implements Runnable {
 		// if data is not saved to ES/DB, do nothing
 		if(this.persistent_style == PersistentStyle.OTHER)
 			return;
-		while (true) {
+		while (!interrupted()) {
 			try {
 				Thread.sleep(CHECK_PERIOD);
-			} catch (InterruptedException ie) {
-				ie.printStackTrace();
-			}
-			
-			List<Object> c_data = null;
-			lock.lock();	
-			try {
-				c_data = new ArrayList<Object>(data);
-				data = new ArrayList<Object>();
 				
-			} finally {
-				lock.unlock();
-			}
-			
-			if(c_data.size() > 0) {
-				Logging.log("before writing, size: " + c_data.size());
-				if (this.persistent_style == PersistentStyle.MONGO)
-					DataWriter.writeData2MongoDB(c_data, task_name, dto);
-				else if(this.persistent_style == PersistentStyle.MYSQL)
-					DataWriter.writeData2MySQL(c_data, task_name, dto);
-				else if(this.persistent_style == PersistentStyle.ES)
-					DataWriter.writeData2ES(c_data, task_name, dto);
+				List<Object> c_data = null;
+				lock.lock();	
+				try {
+					if(data == null || data.size() == 0)
+						continue;
+					c_data = new ArrayList<Object>(data);
+					data = new ArrayList<Object>();
+					
+				} finally {
+					lock.unlock();
+				}
+				
+				if(c_data.size() > 0) {
+					Logging.log("Thread writer: before writing, size: " + c_data.size());
+					if (this.persistent_style == PersistentStyle.MONGO)
+						DataWriter.writeData2MongoDB(c_data, task_name, dto);
+					else if(this.persistent_style == PersistentStyle.MYSQL)
+						DataWriter.writeData2MySQL(c_data, task_name, dto);
+					else if(this.persistent_style == PersistentStyle.ES)
+						DataWriter.writeData2ES(c_data, task_name, dto);
+					Logging.log("Thread writer: finish writing!");
+				}
+
+			} catch (InterruptedException ie) {
+				//ie.printStackTrace();
+				Logging.log("writer thread is interrupted!");
+				break;
 			}
 
 		}
