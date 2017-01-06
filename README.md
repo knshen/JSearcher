@@ -7,7 +7,7 @@ JSearcher is a extensible, distributed crawler framework written in Java. The ma
 * Crawl with multiple threads in a single node
 * Crawl with multiple nodes
 * Download binary data like images and pdf files
-* Data persistency��3 built-in approaches in total: Mysql��MongoDB��ElasticSearch. You can customize your own data persistency approach
+* Data persistency, there are 3 built-in approaches in total: Mysql, MongoDB, ElasticSearch. You can customize your own data persistency approach
 * Configure proxy servers
 
 # Installation
