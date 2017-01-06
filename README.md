@@ -1,4 +1,4 @@
-[ÖÐÎÄ°æREADME](https://github.com/knshen/JSearcher/blob/master/README-ch.md)
+[ä¸­æ–‡ç‰ˆREADME](https://github.com/knshen/JSearcher/blob/master/README-ch.md)
 # JSearcher
 JSearcher is a extensible, distributed crawler framework written in Java. The main features include:
 
@@ -7,7 +7,7 @@ JSearcher is a extensible, distributed crawler framework written in Java. The ma
 * Crawl with multiple threads in a single node
 * Crawl with multiple nodes
 * Download binary data like images and pdf files
-* Data persistency£º3 built-in approaches in total: Mysql£¬MongoDB£¬ElasticSearch. You can customize your own data persistency approach
+* Data persistencyï¿½ï¿½3 built-in approaches in total: Mysqlï¿½ï¿½MongoDBï¿½ï¿½ElasticSearch. You can customize your own data persistency approach
 * Configure proxy servers
 
 # Installation
