@@ -13,6 +13,7 @@ public class Logging {
 	private static BufferedWriter bw = null;
 	static {
 		try {
+			createLogDir();
 			bw = new BufferedWriter(new FileWriter(new File("logs//console.log")));
 		} catch(IOException ioe) {
 			ioe.printStackTrace();
@@ -32,6 +33,11 @@ public class Logging {
 		System.out.println(dateFormat.format(now) + "\n" + str); 	
 	}
 	
+	private static void createLogDir() {
+		File log_dir = new File("logs");
+		if(!log_dir.exists())
+			log_dir.mkdir();
+	}
 	
 	public static void main(String args[]) {
 		Logging.log("123");

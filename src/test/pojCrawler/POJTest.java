@@ -10,7 +10,7 @@ import sjtu.sk.util.PersistentStyle;
 public class POJTest {
 
 	public static void main(String[] args) {
-		//demo 2: crawl poj problem
+		//demo: crawl poj problem
 		List<URL> seeds = new ArrayList<URL>();
 		for(int i=1000; i<=2000; i++) {
 			URL seed = new URL("http://poj.org/problem?id=" + i);

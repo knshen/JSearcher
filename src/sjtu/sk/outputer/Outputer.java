@@ -10,6 +10,11 @@ import java.util.*;
  */
 public abstract class Outputer {
 	protected String path;
+	
+	public Outputer() {
+		
+	}
+	
 	public Outputer(String path) {
 		this.path = path;
 	}

@@ -8,10 +8,6 @@ import sjtu.sk.util.Util;
 import test.dto.OJDTO;
 
 public class POJOutputer extends Outputer {
-	public POJOutputer() {
-		super("f://1.txt");
-	}
-	
 	public boolean output(String task_name, List<Object> data) {
 		for(Object obj : data) {
 			OJDTO dto = (OJDTO)obj;
