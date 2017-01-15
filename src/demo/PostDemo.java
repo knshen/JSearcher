@@ -84,7 +84,7 @@ public class PostDemo {
 	
 	public static void main(String[] args) throws Exception {
 		PostDemo pd = new PostDemo();
-		//pd.searchHouse();
+		pd.searchHouse();
 	}
 
 }

@@ -28,7 +28,7 @@ public class ProxyDemo {
         CloseableHttpClient closeableHttpClient = httpClientBuilder.build();  
       
         // 依次是代理地址，代理端口号，协议类型  
-        HttpHost proxy = new HttpHost("58.208.235.225", 808, "http");  
+        HttpHost proxy = new HttpHost("113.123.53.221", 808, "http");  
         RequestConfig config = RequestConfig.custom().setProxy(proxy).build();  
 
         HttpGet httpget = new HttpGet("http://www.ifeng.com");  

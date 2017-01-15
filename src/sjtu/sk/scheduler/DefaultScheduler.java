@@ -238,12 +238,12 @@ public class DefaultScheduler {
 			DataWriter.writeData2MongoDB(total_data, task_name, dto);
 		else if(this.persistent_style == PersistentStyle.MYSQL && total_data.size() > 0) 
 			DataWriter.writeData2MySQL(total_data, task_name, dto);
-		else if(this.persistent_style == PersistentStyle.OTHER && total_data.size() > 0)
+		else if(this.persistent_style == PersistentStyle.OTHER && total_data.size() > 0) {
 			// Optionally output to a file(like json or cvs) 
 			// Note: if the PersistentStyle is OTHER, all data will be saved at the end of task
 			if(out != null) 	
 				out.output(task_name, total_data);
-			
+		}
 		else if(this.persistent_style == PersistentStyle.ES && total_data.size() > 0)
 			//By default, data must be flushed into ES
 			DataWriter.writeData2ES(total_data, task_name, dto);

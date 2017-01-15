@@ -1,5 +1,4 @@
 *.class
-imageData/
 *.jpg
 *.png
 /bin/

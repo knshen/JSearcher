@@ -200,7 +200,7 @@ public class IndexController {
 		IndexController ic = IndexController
 				.createIndexControllerInstance("localhost", 9300, "knshen-cluster");
 		//ic.searchAll("leetcode", "problem", "dto.user.LeetcodeProblemDTO");	
-		ic.delete("oj", "hdu");
+		ic.delete("testpoj", "check");
 		
 		//System.out.println(ic.count("oj", "hdu"));
 	}
