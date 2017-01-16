@@ -1,11 +1,11 @@
 # number of threads
-num_threads: 2
+num_threads: 1
 
 # maximum pages to crawl 
 maxnum: 5
 
 # task name
-task_name: poj
+task_name: testpoj-check
 
 # path of dto Class definition
 dto: test.dto.OJDTO
@@ -22,12 +22,12 @@ cluster:
 
 # You should choose at most one from the following three persistent styles
 # MySQL configuration
-mysql:
-   host: localhost
-   port: 3306
-   db: JSearcher
-   user: root
-   password: root
+#mysql:
+#   host: localhost
+#   port: 3306
+#   db: JSearcher
+#   user: root
+#   password: root
    
 # MongoDB configuration
 #mongodb:
@@ -36,10 +36,10 @@ mysql:
 #   db: jsearcher
    
 # ElasticSearch configuration
-#es:
-#   host: localhost
-#   port: 9300
-#   cluster_name: knshen-cluster
+es:
+   host: localhost
+   port: 9300
+   cluster_name: knshen-cluster
 
 
 
