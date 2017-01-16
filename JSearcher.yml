@@ -1,8 +1,8 @@
 # number of threads
-num_threads: 1
+num_threads: 2
 
 # maximum pages to crawl 
-maxnum: 5
+maxnum: 6
 
 # task name
 task_name: testpoj-check

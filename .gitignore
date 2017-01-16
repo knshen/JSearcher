@@ -3,3 +3,5 @@
 *.png
 /bin/
 *.yml
+/target/
+*.bak
