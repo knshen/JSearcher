@@ -14,7 +14,7 @@ import java.util.*;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import sjtu.sk.logging.Logging;
+import org.apache.log4j.Logger;
 
 public class Sender {
 	private String queue_name;

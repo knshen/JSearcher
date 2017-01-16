@@ -10,7 +10,7 @@ import org.jsoup.select.Elements;
 import java.util.*;
 
 import sjtu.sk.downloader.HtmlDownloader;
-import sjtu.sk.logging.Logging;
+import org.apache.log4j.Logger;
 import sjtu.sk.url.manager.Link;
 import sjtu.sk.url.manager.URL;
 

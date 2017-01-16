@@ -10,7 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import sjtu.sk.logging.Logging;
+import org.apache.log4j.Logger;
 import sjtu.sk.parser.DataExtractor;
 import sjtu.sk.util.OperatingSystem;
 import sjtu.sk.util.Util;

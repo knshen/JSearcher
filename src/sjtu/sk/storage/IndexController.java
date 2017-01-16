@@ -23,10 +23,12 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 
-import sjtu.sk.logging.Logging;
+import org.apache.log4j.Logger;
 import sjtu.sk.util.Util;
 
 public class IndexController {
+	private static Logger logger = Logger.getLogger(IndexController.class); 
+	
 	public static double PAGE_SIZE = 1000.0;
 	private static IndexController ic = null;
 	private static Client client = null;
@@ -142,7 +144,7 @@ public class IndexController {
 				try {
 					Map<String, Object> map = sh.getSource();
 					res.add(Util.deserialize(map, dto));
-					Logging.log(sh.getSourceAsString() + " " + sh.getScore()
+					logger.info(sh.getSourceAsString() + " " + sh.getScore()
 							+ "\n");
 
 				} catch (ClassNotFoundException cnfe) {

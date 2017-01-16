@@ -11,7 +11,7 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import sjtu.sk.logging.Logging;
+import org.apache.log4j.Logger;
 
 public abstract class Receiver implements Runnable {
 	public static final int interval = 500;

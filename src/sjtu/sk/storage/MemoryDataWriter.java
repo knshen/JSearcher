@@ -3,7 +3,7 @@ package sjtu.sk.storage;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 
-import sjtu.sk.logging.Logging;
+import org.apache.log4j.Logger;
 import sjtu.sk.util.PersistentStyle;
 
 /**
@@ -15,6 +15,8 @@ import sjtu.sk.util.PersistentStyle;
  *
  */
 public class MemoryDataWriter extends Thread {
+	private static Logger logger = Logger.getLogger(MemoryDataWriter.class); 
+	
 	// time interval between two write operations
 	public static final int CHECK_PERIOD = 10000; 
 	// size threshold to trigger flush operation
@@ -56,19 +58,19 @@ public class MemoryDataWriter extends Thread {
 				}
 				
 				if(c_data.size() > 0) {
-					Logging.log("Thread writer: before writing, size: " + c_data.size());
+					logger.info("Thread writer: before writing, size: " + c_data.size());
 					if (this.persistent_style == PersistentStyle.MONGO)
 						DataWriter.writeData2MongoDB(c_data, task_name, dto);
 					else if(this.persistent_style == PersistentStyle.MYSQL)
 						DataWriter.writeData2MySQL(c_data, task_name, dto);
 					else if(this.persistent_style == PersistentStyle.ES)
 						DataWriter.writeData2ES(c_data, task_name, dto);
-					Logging.log("Thread writer: finish writing!");
+					logger.info("Thread writer: finish writing!");
 				}
 
 			} catch (InterruptedException ie) {
 				//ie.printStackTrace();
-				Logging.log("writer thread is interrupted!");
+				logger.info("writer thread is interrupted!");
 				break;
 			}
 

@@ -3,7 +3,7 @@ package sjtu.sk.storage;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import sjtu.sk.logging.Logging;
+import org.apache.log4j.Logger;
 import sjtu.sk.scheduler.SpiderConfig;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.Util;

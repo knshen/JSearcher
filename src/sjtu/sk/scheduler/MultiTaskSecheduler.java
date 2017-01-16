@@ -2,7 +2,7 @@ package sjtu.sk.scheduler;
 
 import java.util.*;
 
-import sjtu.sk.logging.Logging;
+import org.apache.log4j.Logger;
 import sjtu.sk.url.manager.URL;
 import sjtu.sk.util.PersistentStyle;
 

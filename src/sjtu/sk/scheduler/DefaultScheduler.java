@@ -15,7 +15,7 @@ import sjtu.sk.communication.Sender;
 import sjtu.sk.communication.URLReceiver;
 import sjtu.sk.downloader.HtmlDownloader;
 import sjtu.sk.filter.LinkFilter;
-import sjtu.sk.logging.Logging;
+import org.apache.log4j.Logger;
 import sjtu.sk.outputer.Outputer;
 import sjtu.sk.parser.DataExtractor;
 import sjtu.sk.parser.HtmlParser;
@@ -42,7 +42,7 @@ import sjtu.sk.balance.Node;
  *
  */
 public class DefaultScheduler {
-	
+	private static Logger logger = Logger.getLogger(DefaultScheduler.class); 
 	HtmlDownloader hd = null;
 	private HtmlParser hp = null;
 	URLManager um = null;
@@ -122,8 +122,8 @@ public class DefaultScheduler {
 					lock.unlock();
 				}
 				
-				Logging.log(Thread.currentThread().getName() + " visiting: " + new_url.getURLValue());
-								
+				logger.info(Thread.currentThread().getName() + " visiting: " + new_url.getURLValue());
+									
 				List<URL> new_links = hp.parse(html, new_url.getURLValue()); // get new URLs 
 				List<Object> data = de.extract(hp.getDocument(html, new_url.getURLValue()), new_url.getURLValue());  // extract data from current page
 				
@@ -230,10 +230,10 @@ public class DefaultScheduler {
 			ie.printStackTrace();
 		}
 		
-		Logging.log("count: " + this.count + "\n");
+		logger.info("count: " + this.count + "\n");
 		
 		// in the end, flush remaining data to DB/ES/others
-		Logging.log("After finishing task: before writing, size: " + total_data.size());
+		logger.info("After finishing task: before writing, size: " + total_data.size());
 		if (this.persistent_style == PersistentStyle.MONGO && total_data.size() > 0)
 			DataWriter.writeData2MongoDB(total_data, task_name, dto);
 		else if(this.persistent_style == PersistentStyle.MYSQL && total_data.size() > 0) 
@@ -247,8 +247,7 @@ public class DefaultScheduler {
 		else if(this.persistent_style == PersistentStyle.ES && total_data.size() > 0)
 			//By default, data must be flushed into ES
 			DataWriter.writeData2ES(total_data, task_name, dto);
-
-		Logging.log("finished the task!\n");
+		logger.info("finished the task!");
 	}
 	
 	
