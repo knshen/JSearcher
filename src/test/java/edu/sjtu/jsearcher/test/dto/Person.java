@@ -1,8 +1,5 @@
 package edu.sjtu.jsearcher.test.dto;
 
-import java.util.*;
-import java.util.Map.Entry;
-
 /**
  * This is a user defined DTO class (for inserting a object to DB)
  * A DTO class must implement setter and getter for every field

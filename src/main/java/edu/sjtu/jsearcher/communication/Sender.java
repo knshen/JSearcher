@@ -14,11 +14,7 @@ import java.util.*;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import org.apache.log4j.Logger;
-
 public class Sender {
-	private String queue_name;
-	
 	private ConnectionFactory connectionFactory = null;
 	private Connection connection = null;
 	private Session session = null;
@@ -31,8 +27,6 @@ public class Sender {
 	 * @param host_name : destination ip/host name
 	 */
 	public Sender(String queue_name, String host_name) {
-		this.queue_name = queue_name;
-		
 		connectionFactory = new ActiveMQConnectionFactory(
                 ActiveMQConnection.DEFAULT_USER,
                 ActiveMQConnection.DEFAULT_PASSWORD,

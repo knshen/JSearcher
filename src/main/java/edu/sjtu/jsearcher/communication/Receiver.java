@@ -11,8 +11,6 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import org.apache.log4j.Logger;
-
 public abstract class Receiver implements Runnable {
 	public static final int interval = 500;
 	
@@ -21,12 +19,8 @@ public abstract class Receiver implements Runnable {
     private Session session = null;
     private Destination destination = null;
     private MessageConsumer consumer = null;
-    
-    private String queue_name; // local message queue name
-      
-	public Receiver(String queue_name) {
-		this.queue_name = queue_name;
-		
+         
+	public Receiver(String queue_name) {	
 		connectionFactory = new ActiveMQConnectionFactory(
                 ActiveMQConnection.DEFAULT_USER,
                 ActiveMQConnection.DEFAULT_PASSWORD,

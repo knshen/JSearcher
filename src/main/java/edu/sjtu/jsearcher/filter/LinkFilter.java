@@ -3,7 +3,6 @@ package edu.sjtu.jsearcher.filter;
 import java.util.List;
 
 import edu.sjtu.jsearcher.url.manager.Link;
-import edu.sjtu.jsearcher.url.manager.URL;
 
 public abstract class LinkFilter {
 	/**

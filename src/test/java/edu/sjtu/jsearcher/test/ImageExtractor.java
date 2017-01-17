@@ -3,13 +3,10 @@ package edu.sjtu.jsearcher.test;
 import java.util.*;
 import java.io.*;
 
-import org.jsoup.Connection;
-import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.apache.log4j.Logger;
 
 import edu.sjtu.jsearcher.parser.DataExtractor;
 import edu.sjtu.jsearcher.test.dto.Picture;

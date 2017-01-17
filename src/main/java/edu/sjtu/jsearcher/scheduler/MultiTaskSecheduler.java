@@ -2,19 +2,14 @@ package edu.sjtu.jsearcher.scheduler;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import edu.sjtu.jsearcher.url.manager.URL;
-import edu.sjtu.jsearcher.util.PersistentStyle;
 
 public class MultiTaskSecheduler implements Runnable {
 	private List<DefaultScheduler> crawlers = null;
-	private int num_tasks = 1;
 	private List<Thread> tasks = null;
 	private List<List<URL>> seeds = new ArrayList<List<URL>>();
 	
 	private MultiTaskSecheduler(int num_tasks, List<String> paths) {
-		this.num_tasks = num_tasks;
 		this.crawlers = new ArrayList<DefaultScheduler>();
 		for(int i=0; i<num_tasks; i++)
 			crawlers.add(DefaultScheduler.createDefaultScheduler(paths.get(i)));

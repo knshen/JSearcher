@@ -1,6 +1,5 @@
 package edu.sjtu.jsearcher.outputer;
 
-import java.io.*;
 import java.util.*;
 
 /**

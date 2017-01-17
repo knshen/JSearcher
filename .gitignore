@@ -5,3 +5,4 @@
 *.yml
 /target/
 *.bak
+*.log

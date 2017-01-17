@@ -7,41 +7,8 @@ import org.jdom2.Document;
 import org.jdom2.Element;  
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;  
-import org.jdom2.output.Format;  
-import org.jdom2.output.XMLOutputter;  
-
-import edu.sjtu.jsearcher.balance.Node;
 
 public class XMLHandler {
-	
-	/**
-	 * write data to a xml file
-	 * we now suppose data do not have hierarchical structures
-	 * @param data
-	 * @param fileName
-	 */
-	private static void writeXML(String theme, Map<String, Object> data, String filePath) {
-        Element root = new Element(theme);  
-        Document document = new Document(root);  
-  
-        for(Map.Entry<String, Object> entry : data.entrySet()) {
-        	Element ele = new Element(entry.getKey());  
-        	ele.setText(entry.getValue().toString());
-        	root.addContent(ele);
-        }
-        
-        XMLOutputter XMLOut = new XMLOutputter();  
-        try {  
-            Format f = Format.getPrettyFormat();  
-            f.setEncoding("UTF-8");//default=UTF-8  
-            XMLOut.setFormat(f);  
-            XMLOut.output(document, new FileOutputStream(filePath));  
-        } catch (IOException ioe) {  
-            ioe.printStackTrace();  
-        }  
-
-	}
-	
 	/**
 	 * read mysql table configuration file (this configuration is needed only when the persistent
 	 * style is MySQL)

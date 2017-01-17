@@ -8,9 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import edu.sjtu.jsearcher.balance.ConsistentHash;
 import edu.sjtu.jsearcher.balance.HashFunction;
@@ -18,20 +17,16 @@ import edu.sjtu.jsearcher.balance.Node;
 import edu.sjtu.jsearcher.communication.Sender;
 import edu.sjtu.jsearcher.communication.URLReceiver;
 import edu.sjtu.jsearcher.downloader.HtmlDownloader;
-import edu.sjtu.jsearcher.filter.LinkFilter;
 import edu.sjtu.jsearcher.outputer.Outputer;
 import edu.sjtu.jsearcher.parser.DataExtractor;
 import edu.sjtu.jsearcher.parser.HtmlParser;
 import edu.sjtu.jsearcher.storage.DataWriter;
 import edu.sjtu.jsearcher.storage.MemoryDataWriter;
 import edu.sjtu.jsearcher.url.manager.URL;
-import edu.sjtu.jsearcher.url.manager.URLComparator;
 import edu.sjtu.jsearcher.url.manager.URLManager;
 import edu.sjtu.jsearcher.util.BloomFilter;
-import edu.sjtu.jsearcher.util.OperatingSystem;
 import edu.sjtu.jsearcher.util.PersistentStyle;
 import edu.sjtu.jsearcher.util.Util;
-import edu.sjtu.jsearcher.util.XMLHandler;
 import edu.sjtu.jsearcher.util.YamlHandler;
 
 /**
@@ -185,6 +180,9 @@ public class DefaultScheduler {
 		// init cluster info
 		SpiderConfig.cluster = YamlHandler.getClusterConfig(configFilePath);
 		SpiderConfig.ch = new ConsistentHash<Node>(new HashFunction(), SpiderConfig.NUM_VIRTUAL_NODES, SpiderConfig.cluster);
+	
+		// configure log settings
+		PropertyConfigurator.configure("log4j.properties");
 	}
 	
 	

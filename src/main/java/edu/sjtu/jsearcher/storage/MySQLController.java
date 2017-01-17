@@ -3,11 +3,7 @@ package edu.sjtu.jsearcher.storage;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.*;
-import java.util.Date;
 
-import org.apache.activemq.spring.Utils;
-
-import edu.sjtu.jsearcher.scheduler.SpiderConfig;
 import edu.sjtu.jsearcher.util.Util;
 
 public class MySQLController {

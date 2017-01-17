@@ -4,7 +4,7 @@
 
 	<groupId>edu.sjtu</groupId>
 	<artifactId>jsearcher</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1-alpha</version>
 	<packaging>jar</packaging>
 
 	<name>jsearcher</name>

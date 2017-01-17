@@ -1,11 +1,8 @@
 package edu.sjtu.jsearcher.url.manager;
 
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import edu.sjtu.jsearcher.filter.LinkFilter;
-import edu.sjtu.jsearcher.storage.DataWriter;
 import edu.sjtu.jsearcher.util.BloomFilter;
 
 /**
@@ -23,14 +20,12 @@ public class URLManager {
 	// must ensure the URL in the list is distinct
 	//volatile private List<URL> visited = new ArrayList<URL>();
 	private LinkFilter filter = null;
-	private URLComparator<URL> com = null;
 	
 	public void setFilter(LinkFilter filter) {
 		this.filter = filter;
 	}
 	
 	public void setURLComparator(URLComparator<URL> com) {
-		this.com = com;
 		urls = new PriorityQueue<URL>(com);
 	}
 	

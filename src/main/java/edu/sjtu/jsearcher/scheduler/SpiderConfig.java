@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import edu.sjtu.jsearcher.balance.ConsistentHash;
-import edu.sjtu.jsearcher.balance.HashFunction;
 import edu.sjtu.jsearcher.balance.Node;
 import edu.sjtu.jsearcher.filter.LinkFilter;
 import edu.sjtu.jsearcher.outputer.Outputer;

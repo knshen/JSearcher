@@ -3,11 +3,8 @@ package edu.sjtu.jsearcher.storage;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import edu.sjtu.jsearcher.scheduler.SpiderConfig;
 import edu.sjtu.jsearcher.url.manager.URL;
-import edu.sjtu.jsearcher.util.Util;
 import edu.sjtu.jsearcher.util.XMLHandler;
 
 public class DataWriter {

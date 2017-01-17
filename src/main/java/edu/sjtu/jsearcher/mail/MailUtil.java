@@ -65,7 +65,6 @@ public class MailUtil {
 	public static List<MailMessage> getInboxMessage(String account, String password) {
 		List<MailMessage> res = new ArrayList<MailMessage>();
 		String tmp[] = account.split("@");
-		String name = tmp[0];
 		
 		Properties props = new Properties();
 	    props.put("mail.pop3.ssl.enable", true);

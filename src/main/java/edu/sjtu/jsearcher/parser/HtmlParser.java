@@ -1,15 +1,11 @@
 package edu.sjtu.jsearcher.parser;
 
-import java.io.IOException;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.*;
-
-import org.apache.log4j.Logger;
 
 import edu.sjtu.jsearcher.downloader.HtmlDownloader;
 import edu.sjtu.jsearcher.url.manager.Link;
@@ -42,9 +38,9 @@ public class HtmlParser {
 		List<URL> res = new ArrayList<URL>();
 		
 		for(Element link : links) {
-			String info = link.attr("abs:href") + "\n"
-					+ link.text() + "\n"
-					+ "-----------------------";
+			//String info = link.attr("abs:href") + "\n"
+			//		+ link.text() + "\n"
+			//		+ "-----------------------";
 			//Logging.log(info);
 			Link lin = new Link(link.attr("abs:href"), link.text().trim());
 			

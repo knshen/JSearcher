@@ -5,14 +5,12 @@ import java.util.*;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 
 import edu.sjtu.jsearcher.url.manager.URL;
 import edu.sjtu.jsearcher.util.Util;
@@ -33,15 +31,22 @@ public class HtmlDownloader {
 			return;
 		this.enableProxy = true;
 		proxy_pool = new ArrayList<String>();
+		BufferedReader br = null;
 		try {
 			String item = "";
-			BufferedReader br = new BufferedReader(new FileReader(new File(
+			br = new BufferedReader(new FileReader(new File(
 					"proxy")));
 			while ((item = br.readLine()) != null) {
 				proxy_pool.add(item);
 			}
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch(IOException ioe) {
+				ioe.printStackTrace();
+			}	
 		}
 	}
 	

@@ -5,7 +5,6 @@ import java.util.*;
 import edu.sjtu.jsearcher.scheduler.DefaultScheduler;
 import edu.sjtu.jsearcher.scheduler.SpiderConfig;
 import edu.sjtu.jsearcher.url.manager.URL;
-import edu.sjtu.jsearcher.util.PersistentStyle;
 
 public class POJTest {
 
