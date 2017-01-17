@@ -11,14 +11,14 @@ JSearcher是一个纯Java编写的，可扩展的分布式爬虫框架。JSearcher的主要特性包括：
 * 代理服务器设置
 
 # 安装
+目前本项目还不支持从maven安装
 ### 源码下载
 `git clone https://github.com/knshen/JSearcher`
 
-### 添加Jar包
-添加JSearcher.jar到classPath
+进入jsearcher目录，运行`mvn install`，下载相关依赖
 
-### 使用Maven
-还未实现
+### 添加Jar包
+添加JSearcher.jar到相关项目的classPath
 
 # 快速开始
 以网站[http://quotes.toscrape.com/](http://quotes.toscrape.com/)为例（这是一个记录名人名言的网站），我们想要爬取该网站上的名言，爬取内容包括名言内容和作者。该例子的完整代码位于[代码](https://github.com/knshen/JSearcher-examples/tree/master/quotes)。

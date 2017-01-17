@@ -11,14 +11,16 @@ JSearcher is a extensible, distributed crawler framework written in Java. The ma
 * Configure proxy servers
 
 # Installation
+At present, JSearcher does not support install from maven
 ### Download Source Code 
 `git clone https://github.com/knshen/JSearcher`
+
+Enter directory **jsearcher**, run `mvn install` to download dependencies.
 
 ### Add Jar File
 Add JSearcher.jar to your classPath
 
-### Use Maven
-Not implemented yet
+
 
 # Quick Start
 Take this website [http://quotes.toscrape.com/](http://quotes.toscrape.com/) as an example.(This is a website recording quotes), we now want to crawl the quotes on this website, the crawled data includes quote content and its author. The complete code is available at [code](https://github.com/knshen/JSearcher-examples/tree/master/quotes).
