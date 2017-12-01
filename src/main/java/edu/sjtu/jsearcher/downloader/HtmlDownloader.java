@@ -78,7 +78,7 @@ public class HtmlDownloader {
 					config = RequestConfig.custom().setProxy(proxy).build();
 					httpget.setConfig(config);
 				}
-
+							
 				// 执行get请求.
 				trys++;
 				CloseableHttpResponse response = httpclient.execute(httpget);
@@ -86,7 +86,7 @@ public class HtmlDownloader {
 				// Logging.log(response.getStatusLine().toString());
 
 				if (response.getStatusLine().getStatusCode() == 200) {
-					return EntityUtils.toString(entity).trim();
+					return EntityUtils.toString(entity, "GBK").trim();
 				}
 
 			} catch (Exception e) {

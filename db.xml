@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dbs>
-	<db name="JSearcher">
-  		<table name="poj">
-				<col>id int</col>
-				<col>title String</col>
-				<col>content String</col>
-				<col>submit long</col>
-				<col>accept long</col>
-				<col>acRatio double</col>
-				<col>url String</col>
+	<db name="nba">
+  		<table name="player">
+				<col>team String</col>
+				<col>name String</col>
+				<col>number String</col>
+				<col>position String</col>
+				<col>height double</col>
+				<col>weight double</col>
+				<col>birthday String</col>
+				<col>careerAge int</col>
   		</table>
 	</db>
 </dbs>

@@ -1,33 +1,33 @@
 # number of threads
-num_threads: 2
+num_threads: 1
 
 # maximum pages to crawl 
-maxnum: 6
+maxnum: 1230
 
 # task name
-task_name: testpoj-check
+task_name: nba-match
 
 # path of dto Class definition
-dto: test.dto.OJDTO
+dto: edu.sjtu.jsearcher.test.dto.PlayerDTO
 
 # persistent style (MySQL=0, MongoDB=1, ElasticSearch=2, Other=3)
-persistent_style: 3
+persistent_style: 0
 
 # cluster information
 cluster:
    node1:
      name: kaiShen
-     ip: 192.168.1.58
+     ip: 127.0.0.1
 
 
 # You should choose at most one from the following three persistent styles
 # MySQL configuration
-#mysql:
-#   host: localhost
-#   port: 3306
-#   db: JSearcher
-#   user: root
-#   password: root
+mysql:
+   host: localhost
+   port: 3306
+   db: nba
+   user: root
+   password: sk530530
    
 # MongoDB configuration
 #mongodb:
@@ -36,10 +36,10 @@ cluster:
 #   db: jsearcher
    
 # ElasticSearch configuration
-es:
-   host: localhost
-   port: 9300
-   cluster_name: knshen-cluster
+#es:
+#   host: localhost
+#   port: 9300
+#   cluster_name: knshen-cluster
 
 
 

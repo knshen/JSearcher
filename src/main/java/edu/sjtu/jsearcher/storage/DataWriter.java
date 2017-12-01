@@ -22,9 +22,12 @@ public class DataWriter {
 		dc.insert(col_name, data, dto);
 	}
 	
-	public static void writeData2MySQL(List<Object> data, String table, String dto) {
+	public static void writeData2MySQL(List<Object> data, String taskName, String dto) {
+		String db = taskName.split("-")[0];
+		String table = taskName.split("-")[1];
+				
 		MySQLController mc = MySQLController.createDBController(SpiderConfig.storage_host, SpiderConfig.storage_port, SpiderConfig.db_user, SpiderConfig.db_password, SpiderConfig.db_name);
-		Map<String, List<String>> res = XMLHandler.readDBConfig("db.xml", "JSearcher", table);
+		Map<String, List<String>> res = XMLHandler.readDBConfig("db.xml", db, table);
 		
 		//mc.removeAll(table);// delete all before insert
 		mc.insert(table, data, dto, res.get("names"), res.get("types"));
